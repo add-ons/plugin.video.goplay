@@ -3,7 +3,9 @@ name: CI
   push:
     branches:
       - master
-  pull_request:
+  pull_request_target:
+    types:
+      - opened
     branches:
       - master
 jobs:
@@ -52,11 +54,12 @@ jobs:
           HTTP_PROXY: '${{ secrets.HTTP_PROXY }}'
         run: pytest -x -v --cov=./ --cov-report=xml tests
       - name: Upload code coverage to CodeCov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         continue-on-error: true
         env:
           OS: '${{ matrix.os }}'
           PYTHON: '${{ matrix.python-version }}'
         with:
+          token: '${{ secrets.CODECOV_TOKEN }}'
           flags: unittests
           env_vars: 'OS,PYTHON'
