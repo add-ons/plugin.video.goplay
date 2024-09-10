@@ -5,7 +5,7 @@ on:
       - 'v*'
 jobs:
   build:
-    name: Release plugin.video.viervijfzes
+    name: Release plugin.video.goplay
     runs-on: ubuntu-latest
     steps:
       - name: Check out ${{ github.sha }} from repository ${{ github.repository }}

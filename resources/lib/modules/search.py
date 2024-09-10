@@ -7,7 +7,8 @@ import logging
 
 from resources.lib import kodiutils
 from resources.lib.modules.menu import Menu
-from resources.lib.viervijfzes.search import SearchApi
+from resources.lib.goplay.auth import AuthApi
+from resources.lib.goplay.content import ContentApi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -17,7 +18,8 @@ class Search:
 
     def __init__(self):
         """ Initialise object """
-        self._search = SearchApi()
+        self._auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
+        self._api = ContentApi(self._auth, cache_path=kodiutils.get_cache_path())
 
     def show_search(self, query=None):
         """ Shows the search dialog
@@ -32,7 +34,7 @@ class Search:
 
         # Do search
         try:
-            items = self._search.search(query)
+            _, items = self._api.search(query)
         except Exception as ex:  # pylint: disable=broad-except
             kodiutils.notification(message=str(ex))
             kodiutils.end_of_directory()

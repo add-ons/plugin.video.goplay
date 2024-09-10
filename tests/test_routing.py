@@ -29,7 +29,7 @@ class TestRouting(unittest.TestCase):
 
     def test_channels_menu(self):
         routing.run([routing.url_for(addon.show_channels), '0', ''])
-        routing.run([routing.url_for(addon.show_channel_menu, channel='Play4'), '0', ''])
+        routing.run([routing.url_for(addon.show_channel_menu, uuid='26d776d2-7cff-4dd5-86e5-cdff9ab1f364'), '0', ''])  # Play 4
 
     def test_catalog_menu(self):
         routing.run([routing.url_for(addon.show_catalog), '0', ''])
@@ -41,18 +41,14 @@ class TestRouting(unittest.TestCase):
         routing.run([routing.url_for(addon.show_channel_catalog, channel='Play4'), '0', ''])
 
     def test_catalog_program_menu(self):
-        routing.run([routing.url_for(addon.show_catalog_program, channel='Play4', program='de-mol'), '0', ''])
+        routing.run([routing.url_for(addon.show_catalog_program, uuid='7f9c4278-8372-47ef-9cc8-cc10c7b7c9f5'), '0', ''])  # De Mol
 
     def test_catalog_program_season_menu(self):
-        routing.run([routing.url_for(addon.show_catalog_program_season, channel='Play4', program='de-mol', season=-1), '0', ''])
+        routing.run([routing.url_for(addon.show_catalog_program_season, uuid='eeb790c9-1264-4eee-9209-d98627626988'), '0', ''])  # De Mol Seizoen 12
 
     def test_search_menu(self):
         routing.run([routing.url_for(addon.show_search), '0', ''])
         routing.run([routing.url_for(addon.show_search, query='de mol'), '0', ''])
-
-    def test_tvguide_menu(self):
-        routing.run([routing.url_for(addon.show_channel_tvguide, channel='Play4'), '0', ''])
-        routing.run([routing.url_for(addon.show_channel_tvguide_detail, channel='Play4', date='today'), '0', ''])
 
 
 if __name__ == '__main__':

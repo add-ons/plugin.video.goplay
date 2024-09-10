@@ -9,11 +9,6 @@ from routing import Plugin
 
 from resources.lib import kodilogging
 
-try:  # Python 3
-    from urllib.parse import unquote
-except ImportError:  # Python 2
-    from urllib import unquote
-
 routing = Plugin()  # pylint: disable=invalid-name
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,25 +27,11 @@ def show_channels():
     Channels().show_channels()
 
 
-@routing.route('/channels/<channel>')
-def show_channel_menu(channel):
+@routing.route('/channels/<uuid>')
+def show_channel_menu(uuid):
     """ Shows Live TV channels """
     from resources.lib.modules.channels import Channels
-    Channels().show_channel_menu(channel)
-
-
-@routing.route('/channels/<channel>/tvguide')
-def show_channel_tvguide(channel):
-    """ Shows the dates in the tv guide """
-    from resources.lib.modules.tvguide import TvGuide
-    TvGuide().show_channel(channel)
-
-
-@routing.route('/channels/<channel>/tvguide/<date>')
-def show_channel_tvguide_detail(channel=None, date=None):
-    """ Shows the programs of a specific date in the tv guide """
-    from resources.lib.modules.tvguide import TvGuide
-    TvGuide().show_detail(channel, date)
+    Channels().show_channel_menu(uuid)
 
 
 @routing.route('/channels/<channel>/catalog')
@@ -67,25 +48,18 @@ def show_catalog():
     Catalog().show_catalog()
 
 
-@routing.route('/catalog/<program>')
-def show_catalog_program(program):
+@routing.route('/catalog/<uuid>')
+def show_catalog_program(uuid):
     """ Show a program from the catalog """
     from resources.lib.modules.catalog import Catalog
-    Catalog().show_program(program)
+    Catalog().show_program(uuid)
 
 
-@routing.route('/catalog/<program>/clips')
-def show_catalog_program_clips(program):
-    """ Show the clips from a program """
-    from resources.lib.modules.catalog import Catalog
-    Catalog().show_program_clips(program)
-
-
-@routing.route('/catalog/<program>/season/<season>')
-def show_catalog_program_season(program, season):
+@routing.route('/catalog/season/<uuid>')
+def show_catalog_program_season(uuid):
     """ Show a season from a program """
     from resources.lib.modules.catalog import Catalog
-    Catalog().show_program_season(program, season)
+    Catalog().show_season(uuid)
 
 
 @routing.route('/category')
@@ -137,6 +111,13 @@ def mylist_del(uuid):
     Catalog().mylist_del(uuid)
 
 
+@routing.route('/continue')
+def continue_watching():
+    """ Show continue watching list """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().continue_watching()
+
+
 @routing.route('/search')
 @routing.route('/search/<query>')
 def show_search(query=None):
@@ -152,43 +133,12 @@ def play_live(channel):
     Player().live(channel)
 
 
-@routing.route('/play/epg/<channel>/<timestamp>')
-def play_epg(channel, timestamp):
-    """ Play the requested item """
-    from resources.lib.modules.tvguide import TvGuide
-    TvGuide().play_epg_datetime(channel, timestamp)
-
-
 @routing.route('/play/catalog')
-@routing.route('/play/catalog/<uuid>')
-@routing.route('/play/catalog/<uuid>/<islongform>')
-def play_catalog(uuid=None, islongform=False):
-    """ Play the requested item """
-    from ast import literal_eval
-    from resources.lib.modules.player import Player
-    # Convert string to bool using literal_eval
-    Player().play(uuid, literal_eval(islongform))
-
-
-@routing.route('/play/page/<page>')
-def play_from_page(page):
+@routing.route('/play/catalog/<uuid>/<content_type>')
+def play_catalog(uuid=None, content_type=None):
     """ Play the requested item """
     from resources.lib.modules.player import Player
-    Player().play_from_page(unquote(page))
-
-
-@routing.route('/iptv/channels')
-def iptv_channels():
-    """ Generate channel data for the Kodi PVR integration """
-    from resources.lib.modules.iptvmanager import IPTVManager
-    IPTVManager(int(routing.args['port'][0])).send_channels()  # pylint: disable=too-many-function-args
-
-
-@routing.route('/iptv/epg')
-def iptv_epg():
-    """ Generate EPG data for the Kodi PVR integration """
-    from resources.lib.modules.iptvmanager import IPTVManager
-    IPTVManager(int(routing.args['port'][0])).send_epg()  # pylint: disable=too-many-function-args
+    Player().play(uuid, content_type)
 
 
 def run(params):

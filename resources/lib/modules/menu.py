@@ -7,8 +7,8 @@ import logging
 
 from resources.lib import kodiutils
 from resources.lib.kodiutils import TitleItem
-from resources.lib.viervijfzes import STREAM_DICT
-from resources.lib.viervijfzes.content import Episode, Program
+from resources.lib.goplay import STREAM_DICT
+from resources.lib.goplay.content import Episode, Program
 
 try:  # Python 3
     from urllib.parse import quote
@@ -84,6 +84,17 @@ class Menu:
                 }
             ),
             TitleItem(
+                title=kodiutils.localize(30014),  # Continue Watching
+                path=kodiutils.url_for('continue_watching'),
+                art_dict={
+                    'icon': 'DefaultInProgressShows.png',
+                    'fanart': kodiutils.get_addon_info('fanart')
+                },
+                info_dict={
+                    'plot': kodiutils.localize(30014)
+                }
+            ),
+            TitleItem(
                 title=kodiutils.localize(30009),  # Search
                 path=kodiutils.url_for('show_search'),
                 art_dict={
@@ -148,11 +159,11 @@ class Menu:
             context_menu.append((
                 kodiutils.localize(30102),  # Go to Program
                 'Container.Update(%s)' %
-                kodiutils.url_for('show_catalog_program', program=item.path)
+                kodiutils.url_for('show_catalog_program', uuid=item.uuid)
             ))
 
             return TitleItem(title=title,
-                             path=kodiutils.url_for('show_catalog_program', program=item.path),
+                             path=kodiutils.url_for('show_catalog_program', uuid=item.uuid),
                              context_menu=context_menu,
                              art_dict=art_dict,
                              info_dict=info_dict,
@@ -183,7 +194,7 @@ class Menu:
 
             if item.uuid:
                 # We have an UUID and can play this item directly
-                path = kodiutils.url_for('play_catalog', uuid=item.uuid, islongform=item.islongform)
+                path = kodiutils.url_for('play_catalog', uuid=item.uuid, content_type=item.content_type)
             else:
                 # We don't have an UUID, and first need to fetch the video information from the page
                 path = kodiutils.url_for('play_from_page', page=quote(item.path, safe=''))

@@ -9,9 +9,9 @@ import logging
 import unittest
 
 import resources.lib.kodiutils as kodiutils
-from resources.lib.viervijfzes import ResolvedStream
-from resources.lib.viervijfzes.auth import AuthApi
-from resources.lib.viervijfzes.content import ContentApi, Program, Episode, CACHE_PREVENT, Category
+from resources.lib.goplay import ResolvedStream
+from resources.lib.goplay.auth import AuthApi
+from resources.lib.goplay.content import ContentApi, GeoblockedException, Program, CACHE_PREVENT, Category
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -27,14 +27,8 @@ class TestApi(unittest.TestCase):
         self.assertIsInstance(programs, list)
         self.assertIsInstance(programs[0], Program)
 
-    def test_popular_programs(self):
-        for brand in [None, 'vier', 'vijf', 'zes', 'goplay']:
-            programs = self._api.get_popular_programs(brand)
-            self.assertIsInstance(programs, list)
-            self.assertIsInstance(programs[0], Program)
-
     def test_recommendations(self):
-        categories = self._api.get_recommendation_categories()
+        categories = self._api.get_categories()
         self.assertIsInstance(categories, list)
 
     def test_categories(self):
@@ -42,41 +36,65 @@ class TestApi(unittest.TestCase):
         self.assertIsInstance(categories, list)
         self.assertIsInstance(categories[0], Category)
 
-        programs = self._api.get_category_content(int(categories[0].uuid))
+        programs = self._api.get_programs(category=categories[0].uuid)
         self.assertIsInstance(programs, list)
         self.assertIsInstance(programs[0], Program)
 
     def test_episodes(self):
-        for program in ['gentwest', 'zo-man-zo-vrouw']:
+        for program in ['20cdf366-f7ac-4bf8-995a-2af53c89655d', '2e0768da-29b0-4945-821b-f76395f26876']: # Nonkels, Kiekenkotkwis
             program = self._api.get_program(program, cache=CACHE_PREVENT)
             self.assertIsInstance(program, Program)
             self.assertIsInstance(program.seasons, dict)
-            self.assertIsInstance(program.episodes, list)
-            self.assertIsInstance(program.episodes[0], Episode)
-
-    def test_clips(self):
-        for program in ['de-tafel-van-vier']:
-            program = self._api.get_program(program, extract_clips=True, cache=CACHE_PREVENT)
-
-            self.assertIsInstance(program.clips, list)
-            self.assertIsInstance(program.clips[0], Episode)
-
-            episode = self._api.get_episode(program.clips[0].path, cache=CACHE_PREVENT)
-            self.assertIsInstance(episode, Episode)
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_stream(self):
-        program = self._api.get_program('gentwest')
-        self.assertIsInstance(program, Program)
-
-        episode = program.episodes[0]
-        resolved_stream = self._api.get_stream_by_uuid(episode.uuid, episode.islongform)
-        self.assertIsInstance(resolved_stream, ResolvedStream)
+        try:
+            program = self._api.get_program('20cdf366-f7ac-4bf8-995a-2af53c89655d') # Nonkels
+            self.assertIsInstance(program, Program)
+            episode = self._api.get_episodes(program.seasons[0].uuid)[0]
+            resolved_stream = self._api.get_stream(episode.uuid, episode.content_type)
+            self.assertIsInstance(resolved_stream, ResolvedStream)
+        except GeoblockedException as ex:
+            _LOGGER.error(ex)
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_drm_stream(self):
-        resolved_stream = self._api.get_stream_by_uuid('cc77be47-0256-4254-acbf-28a03fcac423', True)  # https://www.goplay.be/video/ncis-los-angeles/ncis-los-angeles-s14/ncis-los-angeles-s14-aflevering-1
-        self.assertIsInstance(resolved_stream, ResolvedStream)
+        try:
+            program = self._api.get_program('0534d8f5-31bc-4c23-ad9b-64c65c929d17') # NCIS: Los Angeles
+            self.assertIsInstance(program, Program)
+            episode = self._api.get_episodes(program.seasons[0].uuid)[0]
+            resolved_stream = self._api.get_stream(episode.uuid, episode.content_type)
+            self.assertIsInstance(resolved_stream, ResolvedStream)
+        except GeoblockedException as ex:
+            _LOGGER.error(ex)
+
+    @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
+    def test_get_mylist(self):
+        my_list =  self._api.get_mylist()
+        self.assertIsInstance(my_list, list)
+        if len(my_list) > 0:
+            self.assertIsInstance(my_list[0], Program)
+
+    @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
+    def test_mylist_add(self):
+        self._api.mylist_add('706542fa-dec9-4675-9b7c-b317720e8bd0')  # Callboys
+
+    @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
+    def test_mylist_del(self):
+        self._api.mylist_del('706542fa-dec9-4675-9b7c-b317720e8bd0')  # Callboys
+
+    def test_search(self):
+        _, programs = self._api.search('de mol')
+        self.assertIsInstance(programs, list)
+        self.assertIsInstance(programs[0], Program)
+
+    def test_search_empty(self):
+        _, programs = self._api.search('')
+        self.assertIsInstance(programs, list)
+
+    def test_search_space(self):
+        _, programs = self._api.search(' ')
+        self.assertIsInstance(programs, list)
 
 
 if __name__ == '__main__':

@@ -9,9 +9,9 @@ import os
 import time
 
 from resources.lib import kodiutils
-from resources.lib.viervijfzes.aws.cognito_identity import CognitoIdentity
-from resources.lib.viervijfzes.aws.cognito_idp import AuthenticationException, CognitoIdp, InvalidLoginException
-from resources.lib.viervijfzes.aws.cognito_sync import CognitoSync
+from resources.lib.goplay.aws.cognito_identity import CognitoIdentity
+from resources.lib.goplay.aws.cognito_idp import AuthenticationException, CognitoIdp, InvalidLoginException
+from resources.lib.goplay.aws.cognito_sync import CognitoSync
 
 _LOGGER = logging.getLogger(__name__)
 

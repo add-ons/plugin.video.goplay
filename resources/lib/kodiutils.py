@@ -374,6 +374,7 @@ def localize(string_id, **kwargs):
     """Return the translated string from the .po language files, optionally translating variables"""
     if kwargs:
         from string import Formatter
+        _LOGGER.debug("localize kwargs: %s", kwargs)
         return Formatter().vformat(ADDON.getLocalizedString(string_id), (), SafeDict(**kwargs))
     return ADDON.getLocalizedString(string_id)
 

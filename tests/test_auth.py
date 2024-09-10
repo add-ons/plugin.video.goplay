@@ -9,7 +9,7 @@ import logging
 import unittest
 
 from resources.lib import kodiutils
-from resources.lib.viervijfzes.auth import AuthApi
+from resources.lib.goplay.auth import AuthApi
 
 _LOGGER = logging.getLogger(__name__)
 

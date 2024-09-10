@@ -54,18 +54,14 @@ msgctxt "#30012"
 msgid "Browse My List"
 msgstr ""
 
-msgctxt "#30013"
-msgid "TV guide"
+msgctxt "#30014"
+msgid "Continue watching"
 msgstr ""
 
 
 ### SUBMENUS
-msgctxt "#30053"
-msgid "TV Guide for [B]{channel}[/B]"
-msgstr ""
-
-msgctxt "#30054"
-msgid "Browse the TV Guide for [B]{channel}[/B]"
+msgctxt "#30052"
+msgid "Watch live [B]{channel}[/B]"
 msgstr ""
 
 msgctxt "#30055"
@@ -74,14 +70,6 @@ msgstr ""
 
 msgctxt "#30056"
 msgid "Browse the Catalog for [B]{channel}[/B]"
-msgstr ""
-
-msgctxt "#30059"
-msgid "Clips of [B]{program}[/B]"
-msgstr ""
-
-msgctxt "#30060"
-msgid "Watch short clips of [B]{program}[/B]"
 msgstr ""
 
 
@@ -100,30 +88,8 @@ msgstr ""
 
 
 ### CODE
-msgctxt "#30204"
-msgid "All seasons"
-msgstr ""
-
-msgctxt "#30205"
-msgid "Season {season}"
-msgstr ""
-
 msgctxt "#30206"
 msgid "Watch [B]{label}[/B] on YouTube"
-msgstr ""
-
-
-### Dates
-msgctxt "#30301"
-msgid "Yesterday"
-msgstr ""
-
-msgctxt "#30302"
-msgid "Today"
-msgstr ""
-
-msgctxt "#30303"
-msgid "Tomorrow"
 msgstr ""
 
 
@@ -137,23 +103,15 @@ msgid "An error occurred while authenticating: {error}."
 msgstr ""
 
 msgctxt "#30710"
-msgid "This video is geo-blocked and can't be played from your location."
+msgid "This video is geo-blocked and can't be played from your location: {error}."
 msgstr ""
 
 msgctxt "#30712"
 msgid "The video is unavailable and can't be played right now."
 msgstr ""
 
-msgctxt "#30713"
-msgid "The requested video was not found in the guide."
-msgstr ""
-
 msgctxt "#30717"
 msgid "This program is not available in the catalogue."
-msgstr ""
-
-msgctxt "#30718"
-msgid "There is no live stream available for {channel}."
 msgstr ""
 
 msgctxt "#30719"
