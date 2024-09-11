@@ -6,9 +6,9 @@ from __future__ import absolute_import, division, unicode_literals
 import logging
 
 from resources.lib import kodiutils
-from resources.lib.kodiutils import TitleItem
 from resources.lib.goplay import STREAM_DICT
 from resources.lib.goplay.content import Episode, Program
+from resources.lib.kodiutils import TitleItem
 
 try:  # Python 3
     from urllib.parse import quote

@@ -13,15 +13,8 @@ from datetime import datetime
 import requests
 
 from resources.lib import kodiutils
-from resources.lib.kodiutils import STREAM_DASH, STREAM_HLS, html_to_kodi
 from resources.lib.goplay import ResolvedStream
-
-try:  # Python 3
-    from html import unescape
-except ImportError:  # Python 2
-    from HTMLParser import HTMLParser
-
-    unescape = HTMLParser().unescape
+from resources.lib.kodiutils import STREAM_DASH, STREAM_HLS, html_to_kodi
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -310,7 +303,7 @@ class ContentApi:
         # Fetch listing from cache or update if needed
         data = self._handle_cache(key=['channels'], cache_mode=cache, update=update)
         if not data:
-            return None
+            raise NoContentException('No content')
 
         channels = self._parse_channels_data(data)
 
@@ -570,33 +563,6 @@ class ContentApi:
             self.API_GOPLAY + '/web/v1/videos/continue-watching/%s' % video_id,
             authentication='Bearer %s' % self._auth.get_token()
         )
-
-    @staticmethod
-    def _extract_programs(html):
-        """ Extract Programs from HTML code
-        :type html: str
-        :rtype list[Program]
-        """
-        # Item regexes
-        regex_item = re.compile(r'<a[^>]+?href="(?P<path>[^"]+)"[^>]+?>'
-                                r'.*?<h3 class="poster-teaser__title">(?P<title>[^<]*)</h3>.*?data-background-image="(?P<image>.*?)".*?'
-                                r'</a>', re.DOTALL)
-
-        # Extract items
-        programs = []
-        for item in regex_item.finditer(html):
-            path = item.group('path')
-            if path.startswith('/video'):
-                continue
-
-            # Program
-            programs.append(Program(
-                path=path.lstrip('/'),
-                title=unescape(item.group('title')),
-                poster=unescape(item.group('image')),
-            ))
-
-        return programs
 
     @staticmethod
     def _parse_program_data(data):

@@ -6,9 +6,9 @@ from __future__ import absolute_import, division, unicode_literals
 import logging
 
 from resources.lib import kodiutils
-from resources.lib.modules.menu import Menu
 from resources.lib.goplay.auth import AuthApi
 from resources.lib.goplay.content import ContentApi
+from resources.lib.modules.menu import Menu
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,6 +18,8 @@ class Search:
 
     def __init__(self):
         """ Initialise object """
+        if not kodiutils.has_credentials():
+            kodiutils.open_settings()
         self._auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
         self._api = ContentApi(self._auth, cache_path=kodiutils.get_cache_path())
 

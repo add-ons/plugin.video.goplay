@@ -21,8 +21,9 @@
         <disclaimer lang="en_GB">This add-on is not officially commissioned/supported by Play Media and is provided 'as is' without any warranty of any kind. The logos are property of Play Media.</disclaimer>
         <platform>all</platform>
         <license>GPL-3.0-only</license>
-        <news>v0.5.0 (2024-09-10)
-- API update.</news>
+        <news>v0.5.0 (2024-09-11)
+        - Update to new GoPlay API
+        </news>
         <source>https://github.com/add-ons/plugin.video.goplay</source>
         <assets>
             <icon>resources/icon.png</icon>

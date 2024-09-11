@@ -33,24 +33,6 @@ def get_files():
     return files
 
 
-def modify_xml(file, version, news, python=None):
-    """ Modify an addon.xml. """
-    with open(file, 'r+') as f:
-        tree = ET.fromstring(f.read())
-
-        # Update values
-        tree.set('version', version)
-        tree.find("./extension[@point='xbmc.addon.metadata']/news").text = news
-        if python:
-            tree.find("./requires/import[@addon='xbmc.python']").set('version', python)
-
-        # Save file
-        f.seek(0)
-        f.truncate()
-        f.write('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' +
-                ET.tostring(tree, encoding='UTF-8').decode())
-
-
 if __name__ == '__main__':
     # Read base addon.xml info
     with open('addon.xml', 'r') as f:
@@ -78,10 +60,5 @@ if __name__ == '__main__':
         else:
             shutil.copytree(f, os.path.join(dest, f), dirs_exist_ok=True)
 
-    # Update addon.xml for matrix and create zip
-    modify_xml(os.path.join(dest, 'addon.xml'), addon_info['version'] + '+matrix.1', addon_info['news'])
-    shutil.make_archive(os.path.join(DIST_DIR, "%s-%s+matrix.1" % (brand, addon_info['version'])), 'zip', DIST_DIR, brand)
-
-    # Modify addon.xml for leia and create zip
-    # modify_xml(os.path.join(dest, 'addon.xml'), addon_info['version'], addon_info['news'], '2.26.0')
-    # shutil.make_archive(os.path.join(DIST_DIR, "%s-%s" % (brand, addon_info['version'])), 'zip', DIST_DIR, brand)
+    # Create zip
+    shutil.make_archive(os.path.join(DIST_DIR, '%s-%s' % (brand, addon_info['version'])), 'zip', DIST_DIR, brand)

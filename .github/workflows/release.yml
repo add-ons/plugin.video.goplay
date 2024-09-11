@@ -9,17 +9,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Get changelog
         id: get-changelog
         run: |
-          description=$(sed '1,6d;/^## /,$d' CHANGELOG.md)
+          description=$(sed '0,/^## Changelog$/d;/^$/d;/## [v0-9\.]*/d;/^-/!d' README.md)
           echo $description
-          description="${description//'%'/'%25'}"
-          description="${description//$'\n'/'%0A'}"
-          description="${description//$'\r'/'%0D'}"
-          echo ::set-output name=body::$description
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "body<<$EOF" >> $GITHUB_OUTPUT
+          echo "$description" >> $GITHUB_OUTPUT
+          echo "$EOF" >> $GITHUB_OUTPUT
 
       - name: Generate distribution zips
         run: scripts/build.py
@@ -32,3 +32,15 @@ jobs:
           prerelease: false
           files: "dist/*.zip"
           token: ${{ secrets.GH_TOKEN }}
+
+      - name: Submit release to official kodi repository
+        id: submit-to-kodi-repo
+        uses: mediaminister/action-kodi-addon-submitter@master
+        with:
+          kodi-repository: repo-plugins
+          kodi-version: matrix
+          addon-id: plugin.video.goplay
+        env:
+          GH_USERNAME: ${{secrets.GH_USERNAME}}
+          GH_TOKEN: ${{secrets.GH_TOKEN}}
+          EMAIL: ${{secrets.EMAIL}}

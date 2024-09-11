@@ -2,10 +2,10 @@
 """ Background service code """
 
 from __future__ import absolute_import, division, unicode_literals
-from threading import Event, Thread
 
 import hashlib
 import logging
+from threading import Event, Thread
 
 from xbmc import Monitor, Player, getInfoLabel
 
