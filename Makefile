@@ -52,13 +52,12 @@ build: clean
 
 release:
 ifneq ($(release),)
-	docker run -it --rm --env CHANGELOG_GITHUB_TOKEN=$(GH_TOKEN) -v "$(shell pwd)":/usr/local/src/your-app githubchangeloggenerator/github-changelog-generator -u add-ons -p plugin.video.viervijfzes --no-issues --exclude-labels duplicate,question,invalid,wontfix,release,testing --future-release v$(release)
-
 	@printf "cd /addon/@version\nset $$release\nsave\nbye\n" | xmllint --shell addon.xml; \
 	date=$(shell date '+%Y-%m-%d'); \
 	printf "cd /addon/extension[@point='xbmc.addon.metadata']/news\nset v$$release ($$date)\nsave\nbye\n" | xmllint --shell addon.xml; \
 
 	# Next steps to release:
+	# - Modify changelog
 	# - Modify the news-section of addons.xml
 	# - git add . && git commit -m "Prepare for v$(release)" && git push
 	# - git tag v$(release) && git push --tags

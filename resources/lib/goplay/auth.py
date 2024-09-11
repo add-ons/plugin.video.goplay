@@ -71,6 +71,8 @@ class AuthApi:
             # We have no tokens, or they are all invalid, do a login
             _LOGGER.debug('Getting an id token by logging in')
             id_token, refresh_token = self._authenticate(self._username, self._password)
+            _LOGGER.debug(id_token)
+            _LOGGER.debug(refresh_token)
             self._id_token = id_token
             self._refresh_token = refresh_token
             self._expiry = now + 3600

@@ -6,10 +6,9 @@ from __future__ import absolute_import, division, unicode_literals
 import logging
 
 from resources.lib import kodiutils
-from resources.lib.kodiutils import TitleItem
-from resources.lib.modules.menu import Menu
 from resources.lib.goplay.auth import AuthApi
 from resources.lib.goplay.content import CACHE_PREVENT, ContentApi, UnavailableException
+from resources.lib.modules.menu import Menu
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,6 +18,8 @@ class Catalog:
 
     def __init__(self):
         """ Initialise object """
+        if not kodiutils.has_credentials():
+            kodiutils.open_settings()
         self._auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
         self._api = ContentApi(self._auth, cache_path=kodiutils.get_cache_path())
 
@@ -80,7 +81,7 @@ class Catalog:
         # Add the seasons
         for season in list(program.seasons.values()):
             listing.append(
-                TitleItem(
+                kodiutils.TitleItem(
                     title=season.title,
                     path=kodiutils.url_for('show_catalog_program_season', uuid=season.uuid),
                     art_dict={
@@ -122,7 +123,7 @@ class Catalog:
 
         listing = []
         for category in categories:
-            listing.append(TitleItem(title=category.title,
+            listing.append(kodiutils.TitleItem(title=category.title,
                                      path=kodiutils.url_for('show_category', category=category.uuid),
                                      info_dict={
                                          'title': category.title,
@@ -145,7 +146,7 @@ class Catalog:
         listing = []
         recommendations = self._api.get_page('home')
         for swimlane in recommendations:
-            listing.append(TitleItem(title=swimlane.title,
+            listing.append(kodiutils.TitleItem(title=swimlane.title,
                                      path=kodiutils.url_for('show_recommendations_category', category=swimlane.index),
                                      info_dict={
                                          'title': swimlane.title,

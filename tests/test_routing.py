@@ -37,6 +37,9 @@ class TestRouting(unittest.TestCase):
     def test_recommendations_menu(self):
         routing.run([routing.url_for(addon.show_recommendations), '0', ''])
 
+    def test_recommendations_category_menu(self):
+        routing.run([routing.url_for(addon.show_recommendations_category, category='2'), '0', ''])  # 2 Net toegevoegd op GoPlay
+
     def test_catalog_channel_menu(self):
         routing.run([routing.url_for(addon.show_channel_catalog, channel='Play4'), '0', ''])
 
@@ -45,6 +48,15 @@ class TestRouting(unittest.TestCase):
 
     def test_catalog_program_season_menu(self):
         routing.run([routing.url_for(addon.show_catalog_program_season, uuid='eeb790c9-1264-4eee-9209-d98627626988'), '0', ''])  # De Mol Seizoen 12
+
+    def test_categories_menu(self):
+        routing.run([routing.url_for(addon.show_categories), '0', ''])
+
+    def test_category_menu(self):
+        routing.run([routing.url_for(addon.show_category, category='5285'), '0', ''])  # 5285 Fictie
+
+    def test_continue_watching_menu(self):
+        routing.run([routing.url_for(addon.continue_watching), '0', ''])
 
     def test_search_menu(self):
         routing.run([routing.url_for(addon.show_search), '0', ''])
