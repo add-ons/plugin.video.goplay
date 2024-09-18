@@ -38,7 +38,7 @@
 			</group>
 		</category>
 		<category id="expert" label="30880" help="">  <!-- Expert -->
-			<group id="2" label="30881">
+			<group id="2" label="30881">   <!-- Logging -->
                 <setting id="debug_logging" type="boolean" label="30882" help="">
 	                <level>0</level>
 	                <default>false</default>
@@ -64,7 +64,19 @@
 	                    <dependency type="visible" on="property" name="infobool">System.HasAddon(script.kodi.loguploader) | System.AddonIsEnabled(script.kodi.loguploader)</dependency>
                     </dependencies>
                 </setting>
-			</group>
+            </group>
+            <group id="3" label="30885">    <!-- Cache -->
+                <setting id="clear_cache" type="action" label="30886" help=""> <!-- Clear cache -->
+	                <level>0</level>
+	                <default/>
+	                <constraints>
+		                <allowempty>true</allowempty>
+	                </constraints>
+	                <control type="button" format="action">
+		                <data>RunPlugin(plugin://plugin.video.goplay/cache/clear)</data>
+	                </control>
+                </setting>
+            </group>
 		</category>
 	</section>
 </settings>

@@ -141,6 +141,13 @@ def play_catalog(uuid=None, content_type=None):
     Player().play(uuid, content_type)
 
 
+@routing.route('/cache/clear')
+def clear_cache():
+    """ Clear the cache """
+    from resources.lib.modules.catalog import Catalog
+    Catalog().clear_cache()
+
+
 def run(params):
     """ Run the routing plugin """
     kodilogging.config()

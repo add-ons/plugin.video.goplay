@@ -1,5 +1,6 @@
 msgid ""
 msgstr ""
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
@@ -96,6 +97,10 @@ msgctxt "#30702"
 msgid "An error occurred while authenticating: {error}."
 msgstr ""
 
+msgctxt "#30707"
+msgid "The cache has been cleared."
+msgstr ""
+
 msgctxt "#30710"
 msgid "This video is geo-blocked and can't be played from your location: {error}."
 msgstr ""
@@ -152,4 +157,12 @@ msgstr ""
 
 msgctxt "#30884"
 msgid "Open Kodi Logfile Uploader…"
+msgstr ""
+
+msgctxt "#30885"
+msgid "Cache"
+msgstr ""
+
+msgctxt "#30886"
+msgid "Clear cache"
 msgstr ""

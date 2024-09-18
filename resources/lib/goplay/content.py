@@ -575,6 +575,7 @@ class ContentApi:
             uuid=data.get('programUuid'),
             path=data.get('programUuid'),
             channel=data.get('brand'),
+            category_name=data.get('category') or 'No category',
             title=data.get('title'),
             description=html_to_kodi(data.get('description')),
             aired=datetime.fromtimestamp(data.get('dates', {}).get('publishDate', 0.0) or 0.0),
