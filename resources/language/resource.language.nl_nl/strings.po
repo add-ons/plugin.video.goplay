@@ -97,6 +97,10 @@ msgctxt "#30702"
 msgid "An error occurred while authenticating: {error}."
 msgstr "Er is een fout opgetreden tijdens het aanmelden: {error}."
 
+msgctxt "#30707"
+msgid "The cache has been cleared."
+msgstr "De cache is gewist."
+
 msgctxt "#30710"
 msgid "This video is geo-blocked and can't be played from your location: {error}."
 msgstr "Deze video is geografisch geblokkeerd en kan niet worden afgespeeld vanaf je locatie: {error}."
@@ -154,3 +158,11 @@ msgstr "Installeer Kodi Logfile Uploader…"
 msgctxt "#30884"
 msgid "Open Kodi Logfile Uploader…"
 msgstr "Open Kodi Logfile Uploader…"
+
+msgctxt "#30885"
+msgid "Cache"
+msgstr "Cache"
+
+msgctxt "#30886"
+msgid "Clear cache"
+msgstr "Wis cache"

@@ -580,6 +580,23 @@ def get_cache_path():
     return getattr(get_cache_path, 'cached')
 
 
+def invalidate_cache(ttl=None):
+    """ Clear the cache """
+    fullpath = get_cache_path() + '/'
+
+    if not xbmcvfs.exists(fullpath):
+        return
+
+    _, files = xbmcvfs.listdir(fullpath)
+    import time
+    now = time.mktime(time.localtime())
+    for filename in files:
+        filepath = os.path.join(fullpath, to_unicode(filename))
+        if ttl and now - xbmcvfs.Stat(filepath).st_mtime() < ttl:
+            continue
+        xbmcvfs.delete(filepath)
+
+
 def get_addon_info(key):
     """Return addon information"""
     return to_unicode(ADDON.getAddonInfo(key))

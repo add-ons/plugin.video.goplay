@@ -106,7 +106,7 @@ class Catalog:
         :type season_uuid: str
         """
         try:
-            episodes = self._api.get_episodes(season_uuid)
+            episodes = self._api.get_episodes(season_uuid, cache=CACHE_PREVENT)  # Use CACHE_PREVENT since we want fresh data
         except UnavailableException:
             kodiutils.ok_dialog(message=kodiutils.localize(30717))  # This program is not available in the catalogue.
             kodiutils.end_of_directory()
@@ -218,3 +218,9 @@ class Catalog:
         # Sort items by title
         # Used for A-Z listing or when movies and episodes are mixed.
         kodiutils.show_listing(listing, 30011, content='tvshows', sort='title')
+
+    @staticmethod
+    def clear_cache():
+        """ Clear the cache """
+        kodiutils.invalidate_cache()
+        kodiutils.notification(message=kodiutils.localize(30707))
