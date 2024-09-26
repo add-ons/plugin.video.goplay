@@ -9,7 +9,7 @@ disable=
     no-init,
     old-style-class,
     too-few-public-methods,
-    too-many-arguments,
+    too-many-positional-arguments,
     too-many-branches,
     too-many-instance-attributes,
     too-many-locals,
@@ -19,7 +19,6 @@ disable=
     consider-using-from-import,
     unspecified-encoding,
     broad-exception-raised,
-
     super-with-arguments, # Python 2.7 compatibility
     raise-missing-from, # Python 2.7 compatibility
     consider-using-f-string, # Python 2.7 compatibility
