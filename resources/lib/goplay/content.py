@@ -217,6 +217,7 @@ class ContentApi:
     """ GoPlay Content API"""
     SITE_URL = 'https://www.goplay.be'
     API_GOPLAY = 'https://api.goplay.be'
+    LICENSE_URL = 'https://widevine.keyos.com/api/v4/getLicense'
 
     def __init__(self, auth=None, cache_path=None):
         """ Initialise object """
@@ -358,7 +359,7 @@ class ContentApi:
             # See https://docs.unified-streaming.com/documentation/drm/buydrm.html#setting-up-the-client
 
             # Generate license key
-            license_key = self.create_license_key('https://wv-keyos.licensekeyserver.com/', key_headers={
+            license_key = self.create_license_key(self.LICENSE_URL, key_headers={
                 'customdata': data['drmXml']
             })
 
