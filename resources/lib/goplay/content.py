@@ -9,6 +9,7 @@ import os
 import re
 import time
 from datetime import datetime
+from xml.etree.ElementTree import XML
 
 import requests
 
@@ -35,6 +36,14 @@ class NoContentException(Exception):
 
 class GeoblockedException(Exception):
     """ Is thrown when a geoblocked item is played. """
+
+
+class MissingModuleException(Exception):
+    """ Is thrown when a Python module is missing. """
+
+
+class ApiException(Exception):
+    """ Is thrown when the Api return an error. """
 
 
 class Program:
@@ -353,15 +362,18 @@ class ContentApi:
             raise UnavailableException
 
         # Get DRM license
-        license_key = None
+        key_headers = None
+        device_path = None
         if data.get('drmXml'):
             # BuyDRM format
             # See https://docs.unified-streaming.com/documentation/drm/buydrm.html#setting-up-the-client
 
-            # Generate license key
-            license_key = self.create_license_key(self.LICENSE_URL, key_headers={
+            key_headers = {
                 'customdata': data['drmXml']
-            })
+            }
+
+            if kodiutils.get_setting_bool('enable_widevine_device') and kodiutils.get_setting('widevine_device'):
+                device_path = kodiutils.get_setting('widevine_device')
 
         # Get manifest url
         if data.get('manifestUrls'):
@@ -372,7 +384,7 @@ class ContentApi:
                     uuid=uuid,
                     url=data['manifestUrls']['dash'],
                     stream_type=STREAM_DASH,
-                    license_key=license_key,
+                    license_key=self.create_license_key(self.LICENSE_URL, key_headers=key_headers, device_path=device_path, manifest_url=data['manifestUrls']['dash']),
                 )
 
             # HLS stream
@@ -380,7 +392,7 @@ class ContentApi:
                 uuid=uuid,
                 url=data['manifestUrls']['hls'],
                 stream_type=STREAM_HLS,
-                license_key=license_key,
+                license_key=self.create_license_key(self.LICENSE_URL, key_headers=key_headers),
             )
 
         # No manifest url found, get manifest from Server-Side Ad Insertion service
@@ -394,7 +406,7 @@ class ContentApi:
                 uuid=uuid,
                 url=ad_data['stream_manifest'],
                 stream_type=STREAM_DASH,
-                license_key=license_key,
+                license_key=self.create_license_key(self.LICENSE_URL, key_headers=key_headers, device_path=device_path, manifest_url=ad_data['stream_manifest']),
             )
         if data.get('message'):
             raise GeoblockedException(data)
@@ -734,8 +746,7 @@ class ContentApi:
         )
         return episode
 
-    @staticmethod
-    def create_license_key(key_url, key_type='R', key_headers=None, key_value='', response_value=''):
+    def create_license_key(self, license_url, key_type='R', key_headers=None, key_value='', response_value='', device_path=None, manifest_url=None):
         """ Create a license key string that we need for inputstream.adaptive.
         :type key_url: str
         :type key_type: str
@@ -749,6 +760,11 @@ class ContentApi:
         except ImportError:  # Python 2
             from urllib import quote, urlencode
 
+        if device_path and manifest_url:
+            pssh_box = self.get_pssh_box(manifest_url)
+            keys = self.get_decryption_keys(license_url, key_headers, pssh_box, device_path)
+            return 'org.w3.clearkey|%s' % keys[0]
+
         header = ''
         if key_headers:
             header = urlencode(key_headers)
@@ -760,83 +776,163 @@ class ContentApi:
                 raise ValueError('Missing D{SSM} placeholder')
             key_value = quote(key_value)
 
-        return '%s|%s|%s|%s' % (key_url, header, key_value, response_value)
+        return '%s|%s|%s|%s' % (license_url, header, key_value, response_value)
 
-    def _get_url(self, url, params=None, authentication=None):
+    def get_pssh_box(self, manifest_url):
+        """ Get PSSH Box.
+        :type manifest_url: str
+        :rtype str
+        """
+        pssh_box = None
+        manifest_data = self._get_url(manifest_url)
+        manifest = XML(manifest_data)
+        mpd_ns = {'mpd': 'urn:mpeg:dash:schema:mpd:2011'}
+        cenc_ns = {'cenc': 'urn:mpeg:cenc:2013'}
+        adaptionset = manifest.find('mpd:Period', mpd_ns).find('mpd:AdaptationSet', mpd_ns)
+        pssh_box = adaptionset.findall('mpd:ContentProtection', mpd_ns)[1].find('cenc:pssh', cenc_ns).text
+        return pssh_box
+
+    def get_decryption_keys(self, license_url, headers, pssh_box, device_path):
+        """Get cenc decryption key from Widevine CDM.
+        :type license_url: str
+        :type headers: str
+        :type pssh_box: str
+        :type device_path: str
+        :rtype str
+        """
+        try:
+            from pywidevine.cdm import Cdm
+            from pywidevine.device import Device
+            from pywidevine.pssh import PSSH
+        except ModuleNotFoundError as exc:
+            raise MissingModuleException(exc)
+
+        # Load device
+        device = Device.load(device_path)
+
+        # Load CDM
+        cdm = Cdm.from_device(device)
+
+        # Open cdm session
+        session_id = cdm.open()
+
+        # Get license challenge
+        challenge = cdm.get_license_challenge(session_id, PSSH(pssh_box))
+
+        # Request
+        wv_license = self._post_url(license_url, headers=headers, data=challenge)
+
+        # parse license challenge
+        cdm.parse_license(session_id, wv_license)
+
+        # Get keys
+        decryption_keys = []
+        for key in cdm.get_keys(session_id):
+            if key.type == 'CONTENT':
+                decryption_keys.append('{}:{}'.format(key.kid.hex, key.key.hex()))
+
+        # close session, disposes of session data
+        cdm.close(session_id)
+
+        return decryption_keys
+
+    def _get_url(self, url, params=None, headers=None, authentication=None):
         """ Makes a GET request for the specified URL.
         :type url: str
         :type authentication: str
         :rtype str
         """
-        if authentication:
-            response = self._session.get(url, params=params, headers={
-                'authorization': authentication,
-            }, proxies=PROXIES)
-        else:
-            response = self._session.get(url, params=params, proxies=PROXIES)
-
-        if response.status_code not in (200, 451):
-            _LOGGER.error(response.text)
-            raise Exception('Could not fetch data')
+        try:
+            if authentication:
+                response = self._session.get(url, params=params, headers={
+                    'authorization': authentication,
+                }, proxies=PROXIES)
+            else:
+                response = self._session.get(url, params=params, headers=headers, proxies=PROXIES)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError:
+            message = self._get_error_message(response)
+            _LOGGER.error(message)
+            raise ApiException(message)
 
         return response.text
 
-    def _post_url(self, url, params=None, data=None, authentication=None):
+    def _post_url(self, url, params=None, headers=None, data=None, authentication=None):
         """ Makes a POST request for the specified URL.
         :type url: str
         :type authentication: str
         :rtype str
         """
-        if authentication:
-            response = self._session.post(url, params=params, json=data, headers={
-                'authorization': authentication,
-            }, proxies=PROXIES)
-        else:
-            response = self._session.post(url, params=params, json=data, proxies=PROXIES)
+        try:
+            if authentication:
+                response = self._session.post(url, params=params, json=data, headers={
+                    'authorization': authentication,
+                }, proxies=PROXIES)
+            else:
+                response = self._session.post(url, params=params, headers=headers, data=data, proxies=PROXIES)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError:
+            message = self._get_error_message(response)
+            _LOGGER.error(message)
+            raise ApiException(message)
 
-        if response.status_code not in (200, 201):
-            _LOGGER.error(response.text)
-            raise Exception('Could not fetch data')
+        return response.content
 
-        return response.text
-
-    def _put_url(self, url, params=None, data=None, authentication=None):
+    def _put_url(self, url, params=None, headers=None, data=None, authentication=None):
         """ Makes a PUT request for the specified URL.
         :type url: str
         :type authentication: str
         :rtype str
         """
-        if authentication:
-            response = self._session.put(url, params=params, json=data, headers={
-                'authorization': authentication,
-            }, proxies=PROXIES)
-        else:
-            response = self._session.put(url, params=params, json=data, proxies=PROXIES)
-
-        if response.status_code not in (200, 201, 204):
-            _LOGGER.error(response.text)
-            raise Exception('Could not fetch data')
+        try:
+            if authentication:
+                response = self._session.put(url, params=params, json=data, headers={
+                    'authorization': authentication,
+                }, proxies=PROXIES)
+            else:
+                response = self._session.put(url, params=params, headers=headers, json=data, proxies=PROXIES)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError:
+            message = self._get_error_message(response)
+            _LOGGER.error(message)
+            raise ApiException(message)
 
         return response.text
 
-    def _delete_url(self, url, params=None, authentication=None):
+    def _delete_url(self, url, params=None, headers=None, authentication=None):
         """ Makes a DELETE request for the specified URL.
         :type url: str
         :type authentication: str
         :rtype str
         """
-        if authentication:
-            response = self._session.delete(url, params=params, headers={
-                'authorization': authentication,
-            }, proxies=PROXIES)
-        else:
-            response = self._session.delete(url, params=params, proxies=PROXIES)
-
-        if response.status_code not in (200, 202):
-            _LOGGER.error(response.text)
-            raise Exception('Could not fetch data')
+        try:
+            if authentication:
+                response = self._session.delete(url, params=params, headers={
+                    'authorization': authentication,
+                }, proxies=PROXIES)
+            else:
+                response = self._session.delete(url, params=params, headers=headers, proxies=PROXIES)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError:
+            message = self._get_error_message(response)
+            _LOGGER.error(message)
+            raise ApiException(message)
 
         return response.text
+
+    @staticmethod
+    def _get_error_message(response):
+        """ Returns the error message of an Api request.
+        :type response: requests.Response Object
+        :rtype str
+        """
+        if response.json().get('message'):
+            message = response.json().get('message')
+        elif response.json().get('errormsg'):
+            message = response.json().get('errormsg')
+        else:
+            message = response.text
+        return message
 
     def _handle_cache(self, key, cache_mode, update, ttl=30 * 24 * 60 * 60):
         """ Fetch something from the cache, and update if needed """

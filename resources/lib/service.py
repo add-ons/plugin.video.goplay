@@ -46,6 +46,13 @@ class BackgroundService(Monitor):
             # Refresh container
             kodiutils.container_refresh()
 
+        # Check widevine_device file extension
+        if kodiutils.get_setting_bool('enable_widevine_device') and kodiutils.get_setting('widevine_device') and not kodiutils.get_setting('widevine_device').endswith('.wvd'):
+            kodiutils.ok_dialog(message=kodiutils.localize(30723))
+            kodiutils.open_settings()
+
+
+
     @staticmethod
     def _has_credentials_changed():
         """ Check if credentials have changed """

@@ -121,6 +121,18 @@ msgctxt "#30720"
 msgid "This video is not available abroad."
 msgstr ""
 
+msgctxt "#30721"
+msgid "You need to install an extra Python module to play this video using an external Widevine device file: {error}."
+msgstr ""
+
+msgctxt "#30722"
+msgid "The server returned an error: {error}."
+msgstr ""
+
+msgctxt "#30723"
+msgid "The Widevine device file must have a '.wvd' extension."
+msgstr ""
+
 
 ### SETTINGS
 msgctxt "#30800"
@@ -165,4 +177,16 @@ msgstr ""
 
 msgctxt "#30886"
 msgid "Clear cache"
+msgstr ""
+
+msgctxt "#30887"
+msgid "Widevine DRM"
+msgstr ""
+
+msgctxt "#30888"
+msgid "Use external Widevine device file"
+msgstr ""
+
+msgctxt "#30889"
+msgid "Widevine device file"
 msgstr ""
