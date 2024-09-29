@@ -121,6 +121,18 @@ msgctxt "#30720"
 msgid "This video is not available abroad."
 msgstr "Deze video is niet beschikbaar in het buitenland."
 
+msgctxt "#30721"
+msgid "You need to install an extra Python module to play this video using an external Widevine device file: {error}."
+msgstr "Je moet een extra Python-module installeren om deze video met een extern Widevine-apparaatbestand te kunnen afspelen: {error}."
+
+msgctxt "#30722"
+msgid "The server returned an error: {error}."
+msgstr "De server gaf een fout: {error}."
+
+msgctxt "#30723"
+msgid "The Widevine device file must have a '.wvd' extension."
+msgstr "Het Widevine-apparaatbestand moet een '.wvd' extensie hebben."
+
 
 ### SETTINGS
 msgctxt "#30800"
@@ -166,3 +178,15 @@ msgstr "Cache"
 msgctxt "#30886"
 msgid "Clear cache"
 msgstr "Wis cache"
+
+msgctxt "#30887"
+msgid "Widevine DRM"
+msgstr "Widevine DRM"
+
+msgctxt "#30888"
+msgid "Use external Widevine device file"
+msgstr "Gebruik extern Widevine-apparaatbestand"
+
+msgctxt "#30889"
+msgid "Widevine device file"
+msgstr "Widevine-apparaatbestand"

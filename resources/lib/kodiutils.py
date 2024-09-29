@@ -262,11 +262,17 @@ def play(stream, stream_type=STREAM_HLS, license_key=None, title=None, art_dict=
         play_item.setMimeType('application/dash+xml')
         import inputstreamhelper
         if license_key is not None:
-            # DRM protected MPEG-DASH
-            is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
-            if is_helper.check_inputstream():
-                play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
-                play_item.setProperty('inputstream.adaptive.license_key', license_key)
+            # Clearkey
+            if license_key.startswith('org.w3.clearkey'):
+                is_helper = inputstreamhelper.Helper('mpd')
+                if is_helper.check_inputstream():
+                    play_item.setProperty('inputstream.adaptive.drm_legacy', license_key)
+            else:
+                # DRM protected MPEG-DASH
+                is_helper = inputstreamhelper.Helper('mpd', drm='com.widevine.alpha')
+                if is_helper.check_inputstream():
+                    play_item.setProperty('inputstream.adaptive.license_type', 'com.widevine.alpha')
+                    play_item.setProperty('inputstream.adaptive.license_key', license_key)
         else:
             # Unprotected MPEG-DASH
             is_helper = inputstreamhelper.Helper('mpd')
