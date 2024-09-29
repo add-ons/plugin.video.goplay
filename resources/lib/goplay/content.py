@@ -408,8 +408,6 @@ class ContentApi:
                 stream_type=STREAM_DASH,
                 license_key=self.create_license_key(self.LICENSE_URL, key_headers=key_headers, device_path=device_path, manifest_url=ad_data['stream_manifest']),
             )
-        if data.get('message'):
-            raise GeoblockedException(data)
         raise UnavailableException
 
     def get_program_tree(self):
@@ -851,9 +849,7 @@ class ContentApi:
                 response = self._session.get(url, params=params, headers=headers, proxies=PROXIES)
             response.raise_for_status()
         except requests.exceptions.HTTPError:
-            message = self._get_error_message(response)
-            _LOGGER.error(message)
-            raise ApiException(message)
+            self._handle_error_message(response)
 
         return response.text
 
@@ -872,9 +868,7 @@ class ContentApi:
                 response = self._session.post(url, params=params, headers=headers, data=data, proxies=PROXIES)
             response.raise_for_status()
         except requests.exceptions.HTTPError:
-            message = self._get_error_message(response)
-            _LOGGER.error(message)
-            raise ApiException(message)
+            self._handle_error_message(response)
 
         return response.content
 
@@ -893,9 +887,7 @@ class ContentApi:
                 response = self._session.put(url, params=params, headers=headers, json=data, proxies=PROXIES)
             response.raise_for_status()
         except requests.exceptions.HTTPError:
-            message = self._get_error_message(response)
-            _LOGGER.error(message)
-            raise ApiException(message)
+            self._handle_error_message(response)
 
         return response.text
 
@@ -914,17 +906,15 @@ class ContentApi:
                 response = self._session.delete(url, params=params, headers=headers, proxies=PROXIES)
             response.raise_for_status()
         except requests.exceptions.HTTPError:
-            message = self._get_error_message(response)
-            _LOGGER.error(message)
-            raise ApiException(message)
+            self._handle_error_message(response)
 
         return response.text
 
+
     @staticmethod
-    def _get_error_message(response):
+    def _handle_error_message(response):
         """ Returns the error message of an Api request.
         :type response: requests.Response Object
-        :rtype str
         """
         if response.json().get('message'):
             message = response.json().get('message')
@@ -932,7 +922,11 @@ class ContentApi:
             message = response.json().get('errormsg')
         else:
             message = response.text
-        return message
+
+        _LOGGER.error(message)
+        if response.status_code == 451:
+            raise GeoblockedException(message)
+        raise ApiException(message)
 
     def _handle_cache(self, key, cache_mode, update, ttl=30 * 24 * 60 * 60):
         """ Fetch something from the cache, and update if needed """
