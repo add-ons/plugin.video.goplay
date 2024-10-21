@@ -14,7 +14,7 @@ jobs:
       - name: Get changelog
         id: get-changelog
         run: |
-          description=$(sed '0,/^## Changelog$/d;/^$/d;/## [v0-9\.]*/d;/^-/!d' README.md)
+          description=$(sed '0,/^## Changelog$/d;/## \[v[0-9\.]*/d;/^$/,$d' README.md)
           echo $description
           EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
           echo "body<<$EOF" >> $GITHUB_OUTPUT
@@ -25,7 +25,7 @@ jobs:
         run: scripts/build.py
 
       - name: Create Release on Github
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           body: ${{ steps.get-changelog.outputs.body }}
           draft: false
