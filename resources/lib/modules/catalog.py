@@ -4,6 +4,7 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import logging
+from urllib.parse import unquote_plus
 
 from resources.lib import kodiutils
 from resources.lib.goplay.auth import AuthApi
@@ -180,7 +181,7 @@ class Catalog:
         # Used for A-Z listing or when movies and episodes are mixed.
         kodiutils.show_listing(listing, 30011, content='tvshows', sort='title')
 
-    def mylist_add(self, uuid):
+    def mylist_add(self, uuid, title):
         """ Add a program to My List """
         if not uuid:
             kodiutils.end_of_directory()
@@ -188,9 +189,10 @@ class Catalog:
 
         self._api.mylist_add(uuid)
 
+        kodiutils.notification(message=kodiutils.localize(30724, title=unquote_plus(title)))  # We need to ensure forward slashes are quoted
         kodiutils.end_of_directory()
 
-    def mylist_del(self, uuid):
+    def mylist_del(self, uuid, title):
         """ Remove a program from My List """
         if not uuid:
             kodiutils.end_of_directory()
@@ -198,6 +200,7 @@ class Catalog:
 
         self._api.mylist_del(uuid)
 
+        kodiutils.notification(message=kodiutils.localize(30725, title=unquote_plus(title)))  # We need to ensure forward slashes are quoted
         kodiutils.end_of_directory()
 
     def continue_watching(self, index=0):

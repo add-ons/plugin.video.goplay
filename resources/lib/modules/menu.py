@@ -4,16 +4,12 @@
 from __future__ import absolute_import, division, unicode_literals
 
 import logging
+from urllib.parse import quote, quote_plus
 
 from resources.lib import kodiutils
 from resources.lib.goplay import STREAM_DICT
 from resources.lib.goplay.content import Episode, Program
 from resources.lib.kodiutils import TitleItem
-
-try:  # Python 3
-    from urllib.parse import quote
-except ImportError:  # Python 2
-    from urllib import quote
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -147,13 +143,13 @@ class Menu:
                     context_menu.append((
                         kodiutils.localize(30101),  # Remove from My List
                         'Container.Update(%s)' %
-                        kodiutils.url_for('mylist_del', uuid=item.uuid)
+                        kodiutils.url_for('mylist_del', uuid=item.uuid, title=quote_plus(item.title))
                     ))
                 else:
                     context_menu.append((
                         kodiutils.localize(30100),  # Add to My List
                         'Container.Update(%s)' %
-                        kodiutils.url_for('mylist_add', uuid=item.uuid)
+                        kodiutils.url_for('mylist_add', uuid=item.uuid, title=quote_plus(item.title))
                     ))
 
             context_menu.append((
