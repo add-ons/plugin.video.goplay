@@ -60,7 +60,7 @@ class TestApi(unittest.TestCase):
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_drm_stream(self):
         try:
-            program = self._api.get_program('0534d8f5-31bc-4c23-ad9b-64c65c929d17') # NCIS: Los Angeles
+            program = self._api.get_program('022bd8fe-793e-4635-85da-4259d44950a3') # CSI Vegas
             self.assertIsInstance(program, Program)
             episode = self._api.get_episodes(program.seasons[0].uuid)[0]
             resolved_stream = self._api.get_stream(episode.uuid, episode.content_type)
