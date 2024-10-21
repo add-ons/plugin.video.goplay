@@ -133,6 +133,14 @@ msgctxt "#30723"
 msgid "The Widevine device file must have a '.wvd' extension."
 msgstr ""
 
+msgctxt "#30724"
+msgid "{title} added to My List"
+msgstr ""
+
+msgctxt "#30725"
+msgid "{title} removed from My List"
+msgstr ""
+
 
 ### SETTINGS
 msgctxt "#30800"
