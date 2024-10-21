@@ -26,12 +26,9 @@ De volgende features worden ondersteund:
  </table>
 
 ## Changelog
-
 ## [v0.5.1](https://github.com/add-ons/plugin.video.goplay/tree/v0.5.1) (2024-10-21)
-
 - Fix caching (@mediaminister)
 - Add support for external Widevine device (@mediaminister)
 
 ## [v0.5.0](https://github.com/add-ons/plugin.video.goplay/tree/v0.5.0) (2024-09-11)
-
 - Update to new GoPlay API (@mediaminister)
