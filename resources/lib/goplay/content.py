@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-""" AUTH API """
-
-from __future__ import absolute_import, division, unicode_literals
+""" CONTENT API """
 
 import json
 import logging
@@ -963,7 +961,7 @@ class ContentApi:
         if not allow_expired and os.stat(fullpath).st_mtime < time.time():
             return None
 
-        with open(fullpath, 'r') as fdesc:
+        with open(fullpath, 'r', encoding='utf-8') as fdesc:
             try:
                 _LOGGER.debug('Fetching %s from cache', filename)
                 value = json.load(fdesc)
@@ -979,7 +977,7 @@ class ContentApi:
         if not os.path.exists(self._cache_path):
             os.makedirs(self._cache_path)
 
-        with open(fullpath, 'w') as fdesc:
+        with open(fullpath, 'w', encoding='utf-8') as fdesc:
             _LOGGER.debug('Storing to cache as %s', filename)
             json.dump(data, fdesc)
 

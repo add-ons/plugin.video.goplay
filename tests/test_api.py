@@ -1,14 +1,10 @@
 # -*- coding: utf-8 -*-
 """ Tests for Content API """
 
-# pylint: disable=missing-docstring,no-self-use
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import logging
 import unittest
 
-import resources.lib.kodiutils as kodiutils
+from resources.lib import kodiutils
 from resources.lib.goplay import ResolvedStream
 from resources.lib.goplay.auth import AuthApi
 from resources.lib.goplay.content import ContentApi, GeoblockedException, Program, CACHE_PREVENT, Category
@@ -17,21 +13,25 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class TestApi(unittest.TestCase):
+    """ Tests for Content Api """
     def __init__(self, *args, **kwargs):
         super(TestApi, self).__init__(*args, **kwargs)
         auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
         self._api = ContentApi(auth, cache_path=kodiutils.get_cache_path())
 
     def test_programs(self):
+        """ Test getting programs"""
         programs = self._api.get_programs()
         self.assertIsInstance(programs, list)
         self.assertIsInstance(programs[0], Program)
 
     def test_recommendations(self):
+        """ Test getting recommendation categories """
         categories = self._api.get_categories()
         self.assertIsInstance(categories, list)
 
     def test_categories(self):
+        """ Test getting categories """
         categories = self._api.get_categories()
         self.assertIsInstance(categories, list)
         self.assertIsInstance(categories[0], Category)
@@ -41,6 +41,7 @@ class TestApi(unittest.TestCase):
         self.assertIsInstance(programs[0], Program)
 
     def test_episodes(self):
+        """ Test getting program season episodes """
         for program in ['20cdf366-f7ac-4bf8-995a-2af53c89655d', '2e0768da-29b0-4945-821b-f76395f26876']: # Nonkels, Kiekenkotkwis
             program = self._api.get_program(program, cache=CACHE_PREVENT)
             self.assertIsInstance(program, Program)
@@ -48,6 +49,7 @@ class TestApi(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_stream(self):
+        """ Test getting resolved stream """
         try:
             program = self._api.get_program('20cdf366-f7ac-4bf8-995a-2af53c89655d') # Nonkels
             self.assertIsInstance(program, Program)
@@ -59,6 +61,7 @@ class TestApi(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_drm_stream(self):
+        """ Test getting DRM protected resolved stream """
         try:
             program = self._api.get_program('022bd8fe-793e-4635-85da-4259d44950a3') # CSI Vegas
             self.assertIsInstance(program, Program)
@@ -70,6 +73,7 @@ class TestApi(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_mylist(self):
+        """ Test getting favorite programs list """
         my_list =  self._api.get_mylist()
         self.assertIsInstance(my_list, list)
         if len(my_list) > 0:
@@ -77,22 +81,27 @@ class TestApi(unittest.TestCase):
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_mylist_add(self):
+        """ Test adding a program to favorite programs list """
         self._api.mylist_add('706542fa-dec9-4675-9b7c-b317720e8bd0')  # Callboys
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_mylist_del(self):
+        """ Test removing a program from favorite programs list """
         self._api.mylist_del('706542fa-dec9-4675-9b7c-b317720e8bd0')  # Callboys
 
     def test_search(self):
+        """ Test searching for a program """
         _, programs = self._api.search('de mol')
         self.assertIsInstance(programs, list)
         self.assertIsInstance(programs[0], Program)
 
     def test_search_empty(self):
+        """ Test searching with empty query """
         _, programs = self._api.search('')
         self.assertIsInstance(programs, list)
 
     def test_search_space(self):
+        """ Test searching with space query """
         _, programs = self._api.search(' ')
         self.assertIsInstance(programs, list)
 

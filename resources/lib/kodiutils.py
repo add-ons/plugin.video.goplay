@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """All functionality that requires Kodi imports"""
 
-from __future__ import absolute_import, division, unicode_literals
-
 import logging
 import os
 import re
@@ -155,7 +153,7 @@ def addon_profile():
 
 def url_for(name, *args, **kwargs):
     """Wrapper for routing.url_for() to lookup by name"""
-    import resources.lib.addon as addon
+    from resources.lib import addon
     return addon.routing.url_for(getattr(addon, name), *args, **kwargs)
 
 

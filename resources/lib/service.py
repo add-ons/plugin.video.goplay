@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Background service code """
 
-from __future__ import absolute_import, division, unicode_literals
-
 import hashlib
 import logging
 from threading import Event, Thread
