@@ -6,7 +6,6 @@ disable=
     fixme,
     import-outside-toplevel,
     line-too-long,
-    no-init,
     old-style-class,
     too-few-public-methods,
     too-many-arguments,
@@ -16,9 +15,6 @@ disable=
     too-many-locals,
     too-many-public-methods,
     too-many-statements,
-    use-maxsplit-arg,
-    consider-using-from-import,
-    unspecified-encoding,
     broad-exception-raised,
     super-with-arguments, # Python 2.7 compatibility
     raise-missing-from, # Python 2.7 compatibility

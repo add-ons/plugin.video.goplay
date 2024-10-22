@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Tests for background service """
 
-# pylint: disable=invalid-name,missing-docstring
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import os
 import signal
 import sys

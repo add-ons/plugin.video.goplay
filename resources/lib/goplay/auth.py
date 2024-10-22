@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """ AUTH API """
 
-from __future__ import absolute_import, division, unicode_literals
-
 import json
 import logging
 import os
@@ -36,7 +34,7 @@ class AuthApi:
 
         # Load tokens from cache
         try:
-            with open(os.path.join(self._token_path, self.TOKEN_FILE), 'r') as fdesc:
+            with open(os.path.join(self._token_path, self.TOKEN_FILE), 'r', encoding='utf-8') as fdesc:
                 data_json = json.loads(fdesc.read())
                 self._id_token = data_json.get('id_token')
                 self._refresh_token = data_json.get('refresh_token')
@@ -80,7 +78,7 @@ class AuthApi:
         # Store new tokens in cache
         if not os.path.exists(self._token_path):
             os.makedirs(self._token_path)
-        with open(os.path.join(self._token_path, self.TOKEN_FILE), 'w') as fdesc:
+        with open(os.path.join(self._token_path, self.TOKEN_FILE), 'w', encoding='utf-8') as fdesc:
             data = json.dumps({
                 'id_token': self._id_token,
                 'refresh_token': self._refresh_token,

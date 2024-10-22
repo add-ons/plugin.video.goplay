@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """Log handler for Kodi"""
 
-from __future__ import absolute_import, division, unicode_literals
-
 import logging
 
 import xbmc

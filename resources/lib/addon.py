@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Addon code """
 
-from __future__ import absolute_import, division, unicode_literals
-
 import logging
 
 from routing import Plugin

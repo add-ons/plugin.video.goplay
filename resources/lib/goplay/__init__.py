@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """ GoPlay API """
-from __future__ import absolute_import, division, unicode_literals
 
 STREAM_DICT = {
     'codec': 'h264',

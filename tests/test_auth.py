@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Tests for AUTH API """
 
-# pylint: disable=missing-docstring,no-self-use
-
-from __future__ import absolute_import, division, print_function, unicode_literals
-
 import logging
 import unittest
 
@@ -15,11 +11,13 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class TestAuth(unittest.TestCase):
+    """Tests for authentication """
     def __init__(self, *args, **kwargs):
         super(TestAuth, self).__init__(*args, **kwargs)
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_login(self):
+        """ Test login procedure """
         auth = AuthApi(kodiutils.get_setting('username'), kodiutils.get_setting('password'), kodiutils.get_tokens_path())
 
         # Clear any cache we have
