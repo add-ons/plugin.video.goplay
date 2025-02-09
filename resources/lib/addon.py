@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Addon code """
 
+from __future__ import absolute_import, division, unicode_literals
+
 import logging
 
 from routing import Plugin
@@ -95,18 +97,18 @@ def show_mylist():
     Catalog().show_mylist()
 
 
-@routing.route('/mylist/add/<uuid>/<title>')
-def mylist_add(uuid, title):
+@routing.route('/mylist/add/<uuid>')
+def mylist_add(uuid):
     """ Add a program to My List """
     from resources.lib.modules.catalog import Catalog
-    Catalog().mylist_add(uuid, title)
+    Catalog().mylist_add(uuid)
 
 
-@routing.route('/mylist/del/<uuid>/<title>')
-def mylist_del(uuid, title):
+@routing.route('/mylist/del/<uuid>')
+def mylist_del(uuid):
     """ Remove a program from My List """
     from resources.lib.modules.catalog import Catalog
-    Catalog().mylist_del(uuid, title)
+    Catalog().mylist_del(uuid)
 
 
 @routing.route('/continue')
@@ -138,6 +140,41 @@ def play_catalog(uuid=None, content_type=None):
     from resources.lib.modules.player import Player
     Player().play(uuid, content_type)
 
+@routing.route('/play/page/<page>')
+def play_from_page(page):
+    """ Play the requested item """
+    from resources.lib.modules.player import Player
+    uuid=page
+    content_type='video'
+    Player().play(uuid, content_type)
+#    Player().play_from_page(unquote(page))
+
+@routing.route('/channels/<channel>/tvguide')
+def show_channel_tvguide(channel):
+    """ Shows the dates in the tv guide """
+    from resources.lib.modules.tvguide import TvGuide
+    TvGuide().show_channel(channel)
+
+
+@routing.route('/channels/<channel>/tvguide/<date>')
+def show_channel_tvguide_detail(channel=None, date=None):
+    """ Shows the programs of a specific date in the tv guide """
+    from resources.lib.modules.tvguide import TvGuide
+    TvGuide().show_detail(channel, date)
+    
+
+@routing.route('/iptv/channels')
+def iptv_channels():
+    """ Generate channel data for the Kodi PVR integration """
+    from resources.lib.modules.iptvmanager import IPTVManager
+    IPTVManager(int(routing.args['port'][0])).send_channels()  # pylint: disable=too-many-function-args
+
+
+@routing.route('/iptv/epg')
+def iptv_epg():
+    """ Generate EPG data for the Kodi PVR integration """
+    from resources.lib.modules.iptvmanager import IPTVManager
+    IPTVManager(int(routing.args['port'][0])).send_epg()  # pylint: disable=too-many-function-args
 
 @routing.route('/cache/clear')
 def clear_cache():
