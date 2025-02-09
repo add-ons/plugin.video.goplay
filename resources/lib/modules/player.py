@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """ Player module """
 
+from __future__ import absolute_import, division, unicode_literals
+
 import logging
 
 from resources.lib import kodiutils
@@ -32,6 +34,15 @@ class Player:
         # if broadcast and broadcast.video_url:
         #     self.play_from_page(broadcast.video_url)
         #     return
+        if "lay" in uuid:  #Channel name from IPTV_manager => get uuid
+            try:
+                items = self._api.get_live_channels()
+            except Exception as ex:
+                kodiutils.notification(message=str(ex))
+                raise
+            channel = next(channel for channel in items if channel.title == uuid)
+            print(f"uuid entry is {uuid}")
+            uuid=channel.uuid
 
         self.play(uuid, 'live_channel')
 
