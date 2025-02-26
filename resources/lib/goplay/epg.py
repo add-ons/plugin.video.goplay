@@ -110,6 +110,15 @@ class EpgApi:
         # Request the epg data
         response = self._get_url(self.EPG_ENDPOINTS.get(channel).format(date=date))
         response=response.replace('\\','')
+        response=response.replace(' ",','",')  # quotes are used in EPG...
+        response=response.replace('," ',',"')
+        response=response.replace(' ":','":')
+        response=response.replace(':" ',':"')
+        response=response.replace(' "',' \'')
+        response=response.replace('" ','\' ')
+        response=response.replace('("','(\'')
+        response=response.replace('")','\')')
+        response=response.replace('.""','.\'"')
         pattern = r'children\":(\[\[\"\$\",[^{]+{\"program.+\])}\]\]}\]'  
         resp=re.findall(pattern,response)
         data = json.loads(resp[0])
