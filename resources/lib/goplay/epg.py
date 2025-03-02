@@ -80,6 +80,7 @@ class EpgApi:
         'Play 5': 'https://www.goplay.be/tv-gids/vijf/{date}',
         'Play 6': 'https://www.goplay.be/tv-gids/zes/{date}',
         'Play 7': 'https://www.goplay.be/tv-gids/zeven/{date}',
+        'Play Crime': 'https://www.goplay.be/tv-gids/crime/{date}'
     }
 
     EPG_NO_BROADCAST = 'Geen uitzending'
@@ -94,6 +95,7 @@ class EpgApi:
         :type date: str
         :rtype list[EpgProgram]
         """
+        # _LOGGER.info("Getting info for channel %s on date %s", channel, date)
         if channel not in self.EPG_ENDPOINTS:
             raise Exception('Unknown channel %s' % channel)
 
@@ -118,6 +120,7 @@ class EpgApi:
         response=response.replace('" ','\' ')
         response=response.replace('("','(\'')
         response=response.replace('")','\')')
+        response=response.replace('". ','\'. )')
         response=response.replace('.""','.\'"')
         pattern = r'children\":(\[\[\"\$\",[^{]+{\"program.+\])}\]\]}\]'  
         resp=re.findall(pattern,response)
