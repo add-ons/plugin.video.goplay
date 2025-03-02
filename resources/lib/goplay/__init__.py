@@ -48,6 +48,16 @@ CHANNELS = OrderedDict([
         'iptv_id': 'play7.be',
         'youtube': []
     }),
+        ('Play Crime', {
+        'name': 'Play Crime',
+        'epg_id': 'crime',
+        'url': 'https://www.goplay.be',
+        'logo': 'playcrime.png',
+        'background': 'playcrime-background.png',
+        'iptv_preset': 18,
+        'iptv_id': 'playcrime7.be',
+        'youtube': []
+    }),
     ('GoPlay', {
         'name': 'Go Play',
         'url': 'https://www.goplay.be',
