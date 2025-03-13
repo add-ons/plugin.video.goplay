@@ -111,8 +111,10 @@ class EpgApi:
 
         # Request the epg data
         response = self._get_url(self.EPG_ENDPOINTS.get(channel).format(date=date))
+        #_LOGGER.info(response)
         response=response.replace('\\','')
-        response=response.replace(' ",','",')  # quotes are used in EPG...
+        response=response.replace('  ','')
+        response=response.replace(' ",','",')
         response=response.replace('," ',',"')
         response=response.replace(' ":','":')
         response=response.replace(':" ',':"')
@@ -122,12 +124,14 @@ class EpgApi:
         response=response.replace('")','\')')
         response=response.replace('". ','\'. )')
         response=response.replace('.""','.\'"')
+        
         pattern = r'children\":(\[\[\"\$\",[^{]+{\"program.+\])}\]\]}\]'  
         resp=re.findall(pattern,response)
+        #_LOGGER.info(resp[0])
         data = json.loads(resp[0])
         # Parse the results
-#        return [self._parse_program(channel, x) for x in data if x.get('programTitle') != self.EPG_NO_BROADCAST]
-        return [self._parse_program(channel, x) for x in data if self.EPG_NO_BROADCAST not in x[3]['program']['programTitle']]
+        # return [self._parse_program(channel, x) for x in data if x.get('programTitle') != self.EPG_NO_BROADCAST]
+        return [self._parse_program(channel, x) for x in data if self.EPG_NO_BROADCAST not in x[3]['program']['programTitle']]          
 
     @staticmethod
     def _parse_program(channel, data):
