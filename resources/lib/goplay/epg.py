@@ -124,6 +124,8 @@ class EpgApi:
         response=response.replace('")','\')')
         response=response.replace('". ','\'. )')
         response=response.replace('.""','.\'"')
+        response=response.replace('"."','\'."')
+
         
         pattern = r'children\":(\[\[\"\$\",[^{]+{\"program.+\])}\]\]}\]'  
         resp=re.findall(pattern,response)
