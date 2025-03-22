@@ -26,6 +26,10 @@ De volgende features worden ondersteund:
  </table>
 
 ## Changelog
+## v0.5.6 (2025-03-22)
+- error capture to continue epg update
+## v0.5.5 (2025-03-13)
+- correction epg double spaces
 ## v0.5.4 (2025-03-02)
 - added Play Crime
 ## v0.5.3 (2025-02-25)
