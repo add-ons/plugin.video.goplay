@@ -81,6 +81,7 @@ class EpgApi:
         'Play 6': 'https://www.goplay.be/tv-gids/zes/{date}',
         'Play 7': 'https://www.goplay.be/tv-gids/zeven/{date}',
         'Play Crime': 'https://www.goplay.be/tv-gids/crime/{date}'
+
     }
 
     EPG_NO_BROADCAST = 'Geen uitzending'
@@ -95,7 +96,7 @@ class EpgApi:
         :type date: str
         :rtype list[EpgProgram]
         """
-        # _LOGGER.info("Getting info for channel %s on date %s", channel, date)
+        #_LOGGER.info("Getting info for channel %s on date %s", channel, date)
         if channel not in self.EPG_ENDPOINTS:
             raise Exception('Unknown channel %s' % channel)
 
@@ -111,7 +112,7 @@ class EpgApi:
 
         # Request the epg data
         response = self._get_url(self.EPG_ENDPOINTS.get(channel).format(date=date))
-        #_LOGGER.info(response)
+        # _LOGGER.info(response)
         response=response.replace('\\','')
         response=response.replace('  ','')
         response=response.replace(' ",','",')
@@ -125,15 +126,22 @@ class EpgApi:
         response=response.replace('". ','\'. )')
         response=response.replace('.""','.\'"')
         response=response.replace('"."','\'."')
-
+        
         
         pattern = r'children\":(\[\[\"\$\",[^{]+{\"program.+\])}\]\]}\]'  
         resp=re.findall(pattern,response)
         #_LOGGER.info(resp[0])
-        data = json.loads(resp[0])
-        # Parse the results
-        # return [self._parse_program(channel, x) for x in data if x.get('programTitle') != self.EPG_NO_BROADCAST]
-        return [self._parse_program(channel, x) for x in data if self.EPG_NO_BROADCAST not in x[3]['program']['programTitle']]          
+
+        try :
+            data = json.loads(resp[0])
+            return [self._parse_program(channel, x) for x in data if self.EPG_NO_BROADCAST not in x[3]['program']['programTitle']]          
+        except Exception as e:
+            ptitle = f"Error occured : {e}"
+            _LOGGER.info(f"Date is {date} and channel is {channel}, {ptitle}")
+            dateYMD = date.split("-")
+            TS = self.convert_to_timestamp(dateYMD[0], dateYMD[1], dateYMD[2]) + 28800
+            y=['$', '$L31', '', {'program': {'classification': {'age': 12, 'icons': {'summary': [], 'full': ['violence', 'fear', 'badLanguage']}}, 'contentEpisode': 'Error', 'dateString': date, 'duration': 43200, 'episodeNr': '1', 'episodeTitle': 'Error', 'genre': 'Actie', 'isMovie': False, 'latestVideo': False, 'originalTitle': None, 'program': None, 'programConcept': 'Actieserie', 'programTitle': ptitle, 'season': '1', 'timeString': '08:00', 'timestamp': TS, 'video': None, 'wonId': None, 'wonProgramId': None}}]
+            return [self._parse_program(channel, y)]          
 
     @staticmethod
     def _parse_program(channel, data):
@@ -142,8 +150,6 @@ class EpgApi:
         :type data: dict
         :rtype EpgProgram
         """
-        Tit=data[3]['program']['programTitle']
-        # print(f"xTitle is {Tit}")
 
         duration = int(data[3]['program']['duration']) if data[3]['program']['duration'] else None
 
@@ -162,8 +168,8 @@ class EpgApi:
         else:
             video_url = None
             thumb = None
-
-        return EpgProgram(
+        
+        Epgr = EpgProgram(
             channel=channel,
             program_title=data[3]['program']['programTitle'],
             episode_title=data[3]['program']['episodeTitle'],
@@ -182,6 +188,8 @@ class EpgApi:
             thumb=thumb,
             airing=airing,
         )
+                
+        return Epgr
 
     def get_broadcast(self, channel, timestamp):
         """ Load EPG information for the specified channel and date.
@@ -213,3 +221,42 @@ class EpgApi:
             raise Exception('Could not fetch data')
 
         return response.text
+        
+    # Function to check if a year is a leap year
+    def is_leap_year(self, year):
+        return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+        
+    # Function to convert year, month, and day to Linux timestamp without datetime lib
+    def convert_to_timestamp(self, year, month, day):
+
+        year=int(year)
+        month=int(month)
+        day=int(day)
+        
+        # Days in each month for regular and leap years
+        days_in_month = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+       
+        # Account for leap year
+        if self.is_leap_year(year):
+            days_in_month[1] = 29
+        
+        # Seconds in a day
+        seconds_per_day = 86400
+        
+        # Calculate the total number of days since Unix epoch (1970-01-01)
+        total_days = 0
+
+        # Add days for each year since 1970
+        for y in range(1970, year):
+            total_days += 366 if self.is_leap_year(y) else 365
+        
+        # Add days for each month in the given year
+        for m in range(1, month):
+            total_days += days_in_month[m - 1]
+        
+        # Add the days in the given month
+        total_days += day - 1  # Subtract 1 because the epoch starts at the beginning of the day
+
+        # Convert days to seconds
+        return total_days * seconds_per_day
+
