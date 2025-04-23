@@ -112,28 +112,18 @@ class EpgApi:
 
         # Request the epg data
         response = self._get_url(self.EPG_ENDPOINTS.get(channel).format(date=date))
-        # _LOGGER.info(response)
-        response=response.replace('\\','')
-        response=response.replace('  ','')
-        response=response.replace(' ",','",')
-        response=response.replace('," ',',"')
-        response=response.replace(' ":','":')
-        response=response.replace(':" ',':"')
-        response=response.replace(' "',' \'')
-        response=response.replace('" ','\' ')
-        response=response.replace('("','(\'')
-        response=response.replace('")','\')')
-        response=response.replace('". ','\'. )')
-        response=response.replace('.""','.\'"')
-        response=response.replace('"."','\'."')
-        
-        
-        pattern = r'children\":(\[\[\"\$\",[^{]+{\"program.+\])}\]\]}\]'  
-        resp=re.findall(pattern,response)
-        #_LOGGER.info(resp[0])
-
+        pattern = r'(\[\[\\"\$\\",\\"\$L31\\",.*?\}\}\]\])'
+        stresult = re.search(pattern,response)
+        resp=stresult.group(1)
+        resp=resp.replace(r'\\\"',r'\\\'')
+        resp=resp.replace('\\','')
+        # _LOGGER.info(resp)
+        # _LOGGER.info(f"Date is {date} and channel is {channel}")      
+        # data = json.loads(resp[0])
+        # data = json.loads(resp)
+        # return [self._parse_program(channel, x) for x in data if self.EPG_NO_BROADCAST not in x[3]['program']['programTitle']]          
         try :
-            data = json.loads(resp[0])
+            data = json.loads(resp)
             return [self._parse_program(channel, x) for x in data if self.EPG_NO_BROADCAST not in x[3]['program']['programTitle']]          
         except Exception as e:
             ptitle = f"Error occured : {e}"
@@ -141,7 +131,7 @@ class EpgApi:
             dateYMD = date.split("-")
             TS = self.convert_to_timestamp(dateYMD[0], dateYMD[1], dateYMD[2]) + 28800
             y=['$', '$L31', '', {'program': {'classification': {'age': 12, 'icons': {'summary': [], 'full': ['violence', 'fear', 'badLanguage']}}, 'contentEpisode': 'Error', 'dateString': date, 'duration': 43200, 'episodeNr': '1', 'episodeTitle': 'Error', 'genre': 'Actie', 'isMovie': False, 'latestVideo': False, 'originalTitle': None, 'program': None, 'programConcept': 'Actieserie', 'programTitle': ptitle, 'season': '1', 'timeString': '08:00', 'timestamp': TS, 'video': None, 'wonId': None, 'wonProgramId': None}}]
-            return [self._parse_program(channel, y)]          
+            return [self._parse_program(channel, y)]
 
     @staticmethod
     def _parse_program(channel, data):
