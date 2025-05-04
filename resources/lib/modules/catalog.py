@@ -114,7 +114,7 @@ class Catalog:
         listing = [Menu.generate_titleitem(episode) for episode in episodes]
 
         # Sort by episode number by default. Takes seasons into account.
-        kodiutils.show_listing(listing, 30003, content='episodes', sort=['episode', 'duration'])
+        kodiutils.show_listing(listing, 30003, content='episodes', sort=['episode', 'duration', 'date'])
 
     def show_categories(self):
         """ Shows the categories """
