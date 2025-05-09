@@ -78,7 +78,7 @@ class TvGuide:
         listing = []
         for day in self.get_dates('%A %d %B %Y'):
             if day.get('highlight'):
-                title = '[B]{title}[/B]'.format(title=day.get('title'))
+                title = '[B][COLOR=yellow]{title}[/COLOR][/B]'.format(title=day.get('title'))
             else:
                 title = day.get('title')
 
@@ -128,7 +128,7 @@ class TvGuide:
             )
 
             if program.airing:
-                title = '[B]{title}[/B]'.format(title=title)
+                title = '[COLOR=yellow][B]{title}[/B][/COLOR]'.format(title=title)
 
 #            if program.video_url:
 #                path = kodiutils.url_for('play_from_page', channel=channel, page=quote(program.video_url, safe=''))
