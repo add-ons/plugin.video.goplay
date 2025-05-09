@@ -99,6 +99,18 @@ msgctxt "#30102"
 msgid "Go to Program"
 msgstr ""
 
+### FEATURED
+msgctxt "#30301"
+msgid "Yesterday"
+msgstr ""
+
+msgctxt "#30302"
+msgid "Today"
+msgstr ""
+
+msgctxt "#30303"
+msgid "Tomorrow"
+msgstr ""
 
 ### MESSAGES
 msgctxt "#30701"
