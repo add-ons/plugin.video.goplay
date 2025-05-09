@@ -110,19 +110,19 @@ class EpgApi:
         elif date == 'tomorrow':
             date = (datetime.today() + timedelta(days=1)).strftime('%Y-%m-%d')
 
-        # Request the epg data
-        response = self._get_url(self.EPG_ENDPOINTS.get(channel).format(date=date))
-        pattern = r'(\[\[\\"\$\\",\\"\$L31\\",.*?\}\}\]\])'
-        stresult = re.search(pattern,response)
-        resp=stresult.group(1)
-        resp=resp.replace(r'\\\"',r'\\\'')
-        resp=resp.replace('\\','')
-        # _LOGGER.info(resp)
-        # _LOGGER.info(f"Date is {date} and channel is {channel}")      
-        # data = json.loads(resp[0])
-        # data = json.loads(resp)
-        # return [self._parse_program(channel, x) for x in data if self.EPG_NO_BROADCAST not in x[3]['program']['programTitle']]          
-        try :
+        try:
+            response = self._get_url(self.EPG_ENDPOINTS.get(channel).format(date=date))
+            # _LOGGER.info(f"Date is {date} and channel is {channel}")
+            # _LOGGER.info(response)
+            # pattern = r'(\[\[\\"\$\\",\\"\$L2e\\",.*?\}\}\]\])'
+            pattern = r'\\"id\\":\\"tvguide-list\\",\\"children\\":(.*?)\]\)<\/script><\/body><\/html>'
+            stresult = re.search(pattern,response)
+            stresult=stresult.group(1)
+            pattern = r'\\"children\\":(.*?)\}\]\]\}\]\\n"'
+            stresult = re.search(pattern,stresult)
+            resp=stresult.group(1)
+            resp=resp.replace(r'\\\"',r'\\\'')
+            resp=resp.replace('\\','')
             data = json.loads(resp)
             return [self._parse_program(channel, x) for x in data if self.EPG_NO_BROADCAST not in x[3]['program']['programTitle']]          
         except Exception as e:
