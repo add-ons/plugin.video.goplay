@@ -26,6 +26,11 @@ De volgende features worden ondersteund:
  </table>
 
 ## Changelog
+## v0.5.8 (2025-05-09)
+- Now regexp version independant. Catch errors with try : no more blockings.
+- Fix text and color in tvguide
+## v0.5.7 (2025-04-23)
+- new epg regexp
 ## v0.5.6 (2025-03-22)
 - error capture to continue epg update
 ## v0.5.5 (2025-03-13)
@@ -34,12 +39,12 @@ De volgende features worden ondersteund:
 - added Play Crime
 ## v0.5.3 (2025-02-25)
 - remove quotes in EPG descriptions
-## v0.5.2 (2025-02-09)
-- Add TV Guide / EPG
-- Restore IPTV manager support
+
 ## [v0.5.1](https://github.com/add-ons/plugin.video.goplay/tree/v0.5.1) (2024-10-21)
+
 - Fix caching (@mediaminister)
 - Add support for external Widevine device (@mediaminister)
 
 ## [v0.5.0](https://github.com/add-ons/plugin.video.goplay/tree/v0.5.0) (2024-09-11)
+
 - Update to new GoPlay API (@mediaminister)

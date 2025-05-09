@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.goplay" name="GoPlay" version="0.5.6" provider-name="mediaminister">
+<addon id="plugin.video.goplay" name="GoPlay" version="0.5.7" provider-name="mediaminister">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.dateutil" version="2.8.1"/>
@@ -22,6 +22,11 @@
         <platform>all</platform>
         <license>GPL-3.0-only</license>
         <news>
+v0.5.8 (2025-05-09)
+- Now regexp version independant. Catch errors with try : no more blockings.
+- Fix text and color in tvguide
+v0.5.7 (2025-04-23)
+- new epg regexp
 v0.5.6 (2025-03-22)
 - error capture to continue epg update
 v0.5.5 (2025-03-13)
