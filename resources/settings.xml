@@ -37,6 +37,43 @@
                 </setting>
 			</group>
 		</category>
+		<category id="integrations" label="30840" help=""> <!-- Integrations -->
+			<group id="1" label="30841"> <!-- IPTV Manager -->
+			<setting id="Install_IPTV_Manager" label="30842" type="action">
+	                	<data>InstallAddon(service.iptv.manager)</data> <!-- Install IPTV Manager add-on -->
+	                	<control type="button" format="action">
+		                	<close>true</close>
+	                	</control>
+	                    	<dependencies>
+		                    <dependency type="visible" on="property" name="infobool">!System.HasAddon(service.iptv.manager)</dependency>
+	                    	</dependencies>
+	                </setting>
+			<setting label="30843" type="boolean" id="iptv.enabled">
+	                	<default>true</default>
+	                	<control type="toggle"/>
+                	</setting>
+			<setting label="30844" type="action" id="iptv.settings"> <!-- IPTV Manager settings -->
+				<data>Addon.OpenSettings(service.iptv.manager)</data>
+	                	<control type="button" format="action">
+		                	<close>true</close>
+	                	</control>
+                	</setting>
+			<setting id="iptv.channels_uri" type="string">
+			    	<default>plugin://plugin.video.goplay/iptv/channels</default>
+	                	<control type="edit" format="string">
+		                	<heading></heading>
+	                	</control>
+                    		<visible>false</visible>
+                	</setting>
+			<setting id="iptv.epg_uri" type="string">
+				<default>plugin://plugin.video.goplay/iptv/epg</default>
+	                	<control type="edit" format="string">
+		                	<heading></heading>
+	                	</control>
+                    		<visible>false</visible>
+                	</setting>
+			</group>
+		</category>
 		<category id="expert" label="30880" help="">  <!-- Expert -->
 			<group id="2" label="30881">   <!-- Logging -->
                 <setting id="debug_logging" type="boolean" label="30882" help="">

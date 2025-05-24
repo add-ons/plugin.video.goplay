@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 """ Channels module """
 
+from __future__ import absolute_import, division, unicode_literals
+
 import logging
 
 from resources.lib import kodiutils
-from resources.lib.goplay import STREAM_DICT
+from resources.lib.goplay import CHANNELS, STREAM_DICT
 from resources.lib.goplay.auth import AuthApi
 from resources.lib.goplay.content import ContentApi
 
@@ -66,6 +68,22 @@ class Channels:
         channel = next(channel for channel in items if channel.uuid == uuid)
 
         listing = []
+
+ #       if channel.get('epg_id'):
+        listing.append(
+            kodiutils.TitleItem(
+                title=kodiutils.localize(30053, channel=channel.title),  # TV Guide for {channel}
+                path=kodiutils.url_for('show_channel_tvguide', channel=channel.title),
+                art_dict={
+                    'icon': 'DefaultAddonTvInfo.png',
+                    'fanart': channel.fanart,
+                },
+                info_dict={
+                    'plot': kodiutils.localize(30054, channel=channel.title),  # Browse the TV Guide for {channel}
+                }
+            )
+        )
+
 
         listing.append(
             kodiutils.TitleItem(
