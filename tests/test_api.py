@@ -2,6 +2,7 @@
 """ Tests for Content API """
 
 import logging
+import os
 import unittest
 
 from resources.lib import kodiutils
@@ -63,7 +64,7 @@ class TestApi(unittest.TestCase):
     def test_get_drm_stream(self):
         """ Test getting DRM protected resolved stream """
         # NOTE: Testing drm only works within Europe, not on Github Actions with US IP
-        if os.environ.get('GITHUB_ACTIONS') != 'true':
+        if self.assertTrue(os.getenv('GITHUB_ACTIONS') != 'true'):
             try:
                 program = self._api.get_program('9c33ef37-6112-49a1-8262-fdc4e8c2266f') # NCIS
                 self.assertIsInstance(program, Program)
