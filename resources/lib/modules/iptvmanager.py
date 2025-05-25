@@ -57,11 +57,6 @@ class IPTVManager:
         """Return JSON-EPG formatted information to IPTV Manager"""
         epg_api = EpgApi()
 
-        try:  # Python 3
-            from urllib.parse import quote
-        except ImportError:  # Python 2
-            from urllib import quote
-
         today = datetime.today()
 
         results = {}
