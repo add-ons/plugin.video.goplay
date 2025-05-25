@@ -61,18 +61,17 @@ class TestApi(unittest.TestCase):
             _LOGGER.error(ex)
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
+    @unittest.skipIf(os.getenv('GITHUB_ACTIONS') == 'true', 'Skipping on GitHub Actions')
     def test_get_drm_stream(self):
         """ Test getting DRM protected resolved stream """
-        # NOTE: Testing drm only works within Europe, not on Github Actions with US IP
-        if self.assertTrue(os.getenv('GITHUB_ACTIONS') != 'true'):
-            try:
-                program = self._api.get_program('9c33ef37-6112-49a1-8262-fdc4e8c2266f') # NCIS
-                self.assertIsInstance(program, Program)
-                episode = self._api.get_episodes(program.seasons[0].uuid)[0]
-                resolved_stream = self._api.get_stream(episode.uuid, episode.content_type)
-                self.assertIsInstance(resolved_stream, ResolvedStream)
-            except GeoblockedException as ex:
-                _LOGGER.error(ex)
+        try:
+            program = self._api.get_program('9c33ef37-6112-49a1-8262-fdc4e8c2266f') # NCIS
+            self.assertIsInstance(program, Program)
+            episode = self._api.get_episodes(program.seasons[0].uuid)[0]
+            resolved_stream = self._api.get_stream(episode.uuid, episode.content_type)
+            self.assertIsInstance(resolved_stream, ResolvedStream)
+        except GeoblockedException as ex:
+            _LOGGER.error(ex)
 
     @unittest.skipUnless(kodiutils.get_setting('username') and kodiutils.get_setting('password'), 'Skipping since we have no credentials.')
     def test_get_mylist(self):
