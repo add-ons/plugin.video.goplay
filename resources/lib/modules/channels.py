@@ -67,6 +67,22 @@ class Channels:
 
         listing = []
 
+ #       if channel.get('epg_id'):
+        listing.append(
+            kodiutils.TitleItem(
+                title=kodiutils.localize(30053, channel=channel.title),  # TV Guide for {channel}
+                path=kodiutils.url_for('show_channel_tvguide', channel=channel.title),
+                art_dict={
+                    'icon': 'DefaultAddonTvInfo.png',
+                    'fanart': channel.fanart,
+                },
+                info_dict={
+                    'plot': kodiutils.localize(30054, channel=channel.title),  # Browse the TV Guide for {channel}
+                }
+            )
+        )
+
+
         listing.append(
             kodiutils.TitleItem(
                 title=kodiutils.localize(30055, channel=channel.title),  # Catalog for {channel}

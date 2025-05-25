@@ -55,6 +55,10 @@ msgctxt "#30012"
 msgid "Browse My List"
 msgstr ""
 
+msgctxt "#30013"
+msgid "TV guide"
+msgstr ""
+
 msgctxt "#30014"
 msgid "Continue watching"
 msgstr ""
@@ -63,6 +67,14 @@ msgstr ""
 ### SUBMENUS
 msgctxt "#30052"
 msgid "Watch live [B]{channel}[/B]"
+msgstr ""
+
+msgctxt "#30053"
+msgid "TV Guide for [B]{channel}[/B]"
+msgstr ""
+
+msgctxt "#30054"
+msgid "Browse the TV Guide for [B]{channel}[/B]"
 msgstr ""
 
 msgctxt "#30055"
@@ -85,6 +97,20 @@ msgstr ""
 
 msgctxt "#30102"
 msgid "Go to Program"
+msgstr ""
+
+
+### FEATURED
+msgctxt "#30301"
+msgid "Yesterday"
+msgstr ""
+
+msgctxt "#30302"
+msgid "Today"
+msgstr ""
+
+msgctxt "#30303"
+msgid "Tomorrow"
 msgstr ""
 
 
@@ -157,6 +183,26 @@ msgstr ""
 
 msgctxt "#30803"
 msgid "Password"
+msgstr ""
+
+msgctxt "#30840"
+msgid "Integration"
+msgstr ""
+
+msgctxt "#30841"
+msgid "IPTV Manager"
+msgstr ""
+
+msgctxt "#30842"
+msgid "Install IPTV Manager add-on…"
+msgstr ""
+
+msgctxt "#30843"
+msgid "Enable IPTV Manager integration"
+msgstr ""
+
+msgctxt "#30844"
+msgid "IPTV Manager settings…"
 msgstr ""
 
 msgctxt "#30880"
