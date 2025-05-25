@@ -63,7 +63,7 @@ class TestApi(unittest.TestCase):
     def test_get_drm_stream(self):
         """ Test getting DRM protected resolved stream """
         try:
-            program = self._api.get_program('022bd8fe-793e-4635-85da-4259d44950a3') # CSI Vegas
+            program = self._api.get_program('9c33ef37-6112-49a1-8262-fdc4e8c2266f') # NCIS
             self.assertIsInstance(program, Program)
             episode = self._api.get_episodes(program.seasons[0].uuid)[0]
             resolved_stream = self._api.get_stream(episode.uuid, episode.content_type)
