@@ -110,7 +110,7 @@ class EpgApi:
 
         try:
             response = self._get_url(self.EPG_ENDPOINTS.get(channel).format(date=date))
-            _LOGGER.info(f"Date is {date} and channel is {channel}")
+            _LOGGER.info("Date is %s and channel is %s", date, channel)
             pattern = r'\\"id\\":\\"tvguide-list\\",\\"children\\":(.*?\]\)<\/script><\/body><\/html>)'
             stresult = re.search(pattern,response)
             stresult=stresult.group(1)
@@ -124,7 +124,7 @@ class EpgApi:
             respnjs='[' + nextjs.group(1)
             lst = json.loads(respnjs)
             nextst = ''
-            for i, val in enumerate(lst):   # some elements are missing: missing $
+            for i, _ in enumerate(lst):   # some elements are missing: missing $
                 ref=lst[i].replace('$L','')
                 psstr=r'<script>self\.__next_f\.push\(\[1,"' + ref + r':(\["\$".*?}}])'
                 match = re.search(psstr, resp)
@@ -132,7 +132,7 @@ class EpgApi:
                     respnjs = match.group(1)
                     nextst += ',' + respnjs
                 else:
-                    _LOGGER.warning(f"No match found for reference: {ref}")
+                    _LOGGER.warning("No match found for reference: %s", ref)
             pattern = r'\"children\":(.*?}}]),\"\$L'   # r'\"children\":(.*?\"}}],)\"\$L'"
             resp = re.search(pattern,stresult)
             resp = resp.group(1) + nextst + "]"

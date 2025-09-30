@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Get changelog
         id: get-changelog

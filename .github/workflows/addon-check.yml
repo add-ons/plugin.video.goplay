@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out ${{ github.sha }} from repository ${{ github.repository }}
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v5
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install git+https://github.com/xbmc/addon-check.git
       - name: Run kodi-addon-checker
-        uses: xbmc/action-kodi-addon-checker@v1.2
-        with:
-          kodi-version: matrix
-          addon-id: ${{ github.event.repository.name }}
+        run: kodi-addon-checker --branch=matrix ${{ github.repository }}/
