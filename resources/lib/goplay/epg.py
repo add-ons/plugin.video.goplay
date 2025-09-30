@@ -110,17 +110,32 @@ class EpgApi:
 
         try:
             response = self._get_url(self.EPG_ENDPOINTS.get(channel).format(date=date))
-            # _LOGGER.info(f"Date is {date} and channel is {channel}")
-            # _LOGGER.info(response)
-            # pattern = r'(\[\[\\"\$\\",\\"\$L2e\\",.*?\}\}\]\])'
-            pattern = r'\\"id\\":\\"tvguide-list\\",\\"children\\":(.*?)\]\)<\/script><\/body><\/html>'
+            _LOGGER.info(f"Date is {date} and channel is {channel}")
+            pattern = r'\\"id\\":\\"tvguide-list\\",\\"children\\":(.*?\]\)<\/script><\/body><\/html>)'
             stresult = re.search(pattern,response)
             stresult=stresult.group(1)
-            pattern = r'\\"children\\":(.*?)\}\]\]\}\]\\n"'
-            stresult = re.search(pattern,stresult)
-            resp=stresult.group(1)
-            resp=resp.replace(r'\\\"',r'\\\'')
-            resp=resp.replace('\\','')
+            stresult=stresult.replace(r'\\\"',r'\\\'')
+            stresult=stresult.replace('\\','')
+            pattern = r'\"children\":(.*?\]\))<\/script><\/body><\/html>'
+            resp = re.search(pattern,stresult)
+            resp = resp.group(1)
+            pattern = r'"}}],("\$L.*?\])'
+            nextjs = re.search(pattern,resp)
+            respnjs='[' + nextjs.group(1)
+            lst = json.loads(respnjs)
+            nextst = ''
+            for i, val in enumerate(lst):   # some elements are missing: missing $
+                ref=lst[i].replace('$L','')
+                psstr=r'<script>self\.__next_f\.push\(\[1,"' + ref + r':(\["\$".*?}}])'
+                match = re.search(psstr, resp)
+                if match:
+                    respnjs = match.group(1)
+                    nextst += ',' + respnjs
+                else:
+                    _LOGGER.warning(f"No match found for reference: {ref}")
+            pattern = r'\"children\":(.*?\"}}]),\"\$L'   # r'\"children\":(.*?\"}}],)\"\$L'"
+            resp = re.search(pattern,stresult)
+            resp = resp.group(1) + nextst + "]"
             data = json.loads(resp)
             return [self._parse_program(channel, x) for x in data if self.EPG_NO_BROADCAST not in x[3]['program']['programTitle']]
         except Exception as e:  # pylint: disable=broad-exception-caught
@@ -138,9 +153,7 @@ class EpgApi:
         :type data: dict
         :rtype EpgProgram
         """
-
         duration = int(data[3]['program']['duration']) if data[3]['program']['duration'] else None
-
         # Check if this broadcast is currently airing
         timestamp = datetime.now().replace(tzinfo=dateutil.tz.gettz('CET'))
         start = datetime.fromtimestamp(data[3]['program']['timestamp']).replace(tzinfo=dateutil.tz.gettz('CET'))
@@ -176,7 +189,6 @@ class EpgApi:
             thumb=thumb,
             airing=airing,
         )
-
         return epg_program
 
     def get_broadcast(self, channel, timestamp):
