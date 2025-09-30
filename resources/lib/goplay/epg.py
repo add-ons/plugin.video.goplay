@@ -119,7 +119,7 @@ class EpgApi:
             pattern = r'\"children\":(.*?\]\))<\/script><\/body><\/html>'
             resp = re.search(pattern,stresult)
             resp = resp.group(1)
-            pattern = r'"}}],("\$L.*?\])'
+            pattern = r'}}],("\$L.*?\])'
             nextjs = re.search(pattern,resp)
             respnjs='[' + nextjs.group(1)
             lst = json.loads(respnjs)
@@ -133,7 +133,7 @@ class EpgApi:
                     nextst += ',' + respnjs
                 else:
                     _LOGGER.warning(f"No match found for reference: {ref}")
-            pattern = r'\"children\":(.*?\"}}]),\"\$L'   # r'\"children\":(.*?\"}}],)\"\$L'"
+            pattern = r'\"children\":(.*?}}]),\"\$L'   # r'\"children\":(.*?\"}}],)\"\$L'"
             resp = re.search(pattern,stresult)
             resp = resp.group(1) + nextst + "]"
             data = json.loads(resp)
